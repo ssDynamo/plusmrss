@@ -1,0 +1,109 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Quotations</ion-title>
+    <ion-buttons color=primary slot=end >
+      <ion-button color="primary"  >+ Add</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+
+
+    <ion-row class=" searchfilterrow">
+      <ion-col size=3>
+          <ion-label class="mt-left">Select By LeadOwner</ion-label>
+          <ng-select name=username [(ngModel)]="filtermodel.searchquser"  (change)="filter()" >
+            <ng-container *ngFor="let item of apiService.DBCache['USER_LIST']">
+              <ng-option [value]="item._id">{{item?.name}}</ng-option>
+            </ng-container>
+          </ng-select>
+     </ion-col>
+     <ion-col size=3>
+      <ion-label class="mt-left">Select By Customer</ion-label>
+      <app-customer-autocomplete *ngIf="!loading" [item]="model.customer" (newItemEvent)="model.customer=$event;getCustomer($event)"></app-customer-autocomplete>
+      <!-- <ng-select name=customer [(ngModel)]="filtermodel.searchqcustomer"  (change)="filter()" >
+        <ng-container *ngFor="let item of apiService.DBCache['CUSTOMER_LIST']">
+          <ng-option [value]="item._id">{{item?.name}}</ng-option>
+        </ng-container>
+      </ng-select> -->
+     </ion-col>
+      <ion-col size=6 class="">
+        <div class="flexcentercenter">
+        <ion-searchbar placeholder="Search"[(ngModel)]="filtermodel.q" (ionChange)="filter()" placeholder="Id Seq / PI-NO "></ion-searchbar>
+        <ion-button class="button_add" color="primary" routerLink="/quotation/addedit" *ngIf="authService.checkPermission('quotation_add')">Add Quotation</ion-button>
+      </div>
+      </ion-col>
+
+    </ion-row>
+  <ngx-datatable
+  class="material"
+  [columnMode]="'force'"
+    [externalPaging]="true"
+    [count]="pagination.count"
+    [offset]="pagination.offset"
+    [limit]="pagination.limit"
+    [rows]="items"
+    (page)="pageCallback($event)"
+    [scrollbarH]="true"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+  >
+
+  <ngx-datatable-column name="Seq" >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b>{{row?.idseq}}</b><br>
+      PI No # {{row?.pi_no}}
+      </ng-template>
+  </ngx-datatable-column>
+
+
+   <ngx-datatable-column name="Customer" >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b>{{row?.customer?.name | titlecase}}</b>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="LeadOwner"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+
+      <b>{{row?.user?.name | titlecase}}</b><br>
+      <span>Role: {{row?.user?.role?.name}}</span>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Cart"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+    <b>S$ {{row?.total | number:'1.2-2':'en-US'}} </b><br>
+     {{row?.items?.length}} Item<span *ngIf="row?.items.length>1">s</span><br>
+
+
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Status"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+    <b> {{row?.status | titlecase}} </b><br>
+    <span>Created on :{{row?.createdAt | date}}</span><br>
+    <span>Updated on :{{row?.updatedAt | date}}</span>
+
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Actions" [width]="30" [frozenRight]="true" *ngIf="authService.checkPermission('quotation_edit')">
+    <ng-template let-row="row"  ngx-datatable-cell-template >
+    <div class="tableactions" >
+      <span  [routerLink]="'/quotation/addedit'" title="Edit" [queryParams]="{_id:row._id}" [state]="{item:row}" >
+        <ion-icon name="create-outline"></ion-icon> </span>
+    </div>
+    </ng-template>
+  </ngx-datatable-column>
+
+  </ngx-datatable>
+
+</ion-content>

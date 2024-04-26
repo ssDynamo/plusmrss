@@ -1,0 +1,73 @@
+<ion-list *ngIf="authService.currentUserValue" >
+  <ion-list-header>Sales</ion-list-header>
+  <ion-menu-toggle auto-hide="false" *ngFor="let p of salesPages; let i = index">
+    <ion-item *ngIf="authService.currentUserValue && authService.checkPermission(p.alias)" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected" >
+      <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+      <ion-label>{{ p.title }}</ion-label>
+      <ion-icon slot=end class="rightarrow" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+  </ion-menu-toggle>
+  <ion-menu-toggle auto-hide="false" *ngIf="authService.checkPermission('transaction_list') || authService.checkPermission('bankstatement_list') || authService.checkPermission('creditenote_list') || authService.checkPermission('refund_list')">
+    <ion-item  routerDirection="root" [routerLink]="['/accounting']" lines="none" detail="false" routerLinkActive="selected" >
+      <ion-icon slot="start" name="newspaper-outline"></ion-icon>
+      <ion-label>Accounting</ion-label>
+      <ion-icon slot=end class="rightarrow" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+  </ion-menu-toggle>
+</ion-list>
+
+
+<ion-list *ngIf="authService.currentUserValue">
+  <ion-list-header>Data</ion-list-header>
+  <ion-menu-toggle auto-hide="false" *ngFor="let p of dataPages; let i = index">
+    <ion-item *ngIf="authService.currentUserValue && authService.checkPermission(p.alias)" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+      <ion-label>{{ p.title }}</ion-label>
+      <ion-icon slot=end class="rightarrow" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+  </ion-menu-toggle>
+</ion-list>
+
+<ion-list *ngIf="authService.checkPermission('user_list') || authService.checkPermission('tariff_list') || authService.checkPermission('role_list') || authService.checkPermission('region_list')">
+  <ion-list-header>Admin</ion-list-header>
+  <ion-menu-toggle auto-hide="false">
+    <ion-item routerDirection="root" [routerLink]="'/admin'" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon slot="start" name="settings-outline"></ion-icon>
+      <ion-label>Admin</ion-label>
+      <ion-icon slot=end class="rightarrow" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+  </ion-menu-toggle>
+
+  <!-- <ion-menu-toggle auto-hide="false">
+    <ion-item routerDirection="root" [routerLink]="'/notification'" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon slot="start" name="settings-outline"></ion-icon>
+      <ion-label>Notifications</ion-label>
+      <ion-icon slot=end class="rightarrow" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+  </ion-menu-toggle>
+
+
+  <ion-menu-toggle auto-hide="false">
+    <ion-item routerDirection="root" [routerLink]="'/log'" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon slot="start" name="settings-outline"></ion-icon>
+      <ion-label>System Log</ion-label>
+      <ion-icon slot=end class="rightarrow" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+  </ion-menu-toggle> -->
+
+
+</ion-list>
+
+<ion-list  *ngIf="authService.currentUserValue" >
+  <ion-menu-toggle auto-hide="false">
+    <ion-item routerDirection="root" [routerLink]="'/support'" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon slot="start" name="help-buoy" ></ion-icon>
+      <ion-label>Support</ion-label>
+      <ion-icon slot=end class="rightarrow" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+  </ion-menu-toggle>
+</ion-list>
+
+<hr>
+
+<div  style="display:none; text-align:center;font-size:small"  ><p  class="text-center"> For Technical Support :<br> Mail : <a  href="mailto:support@mobify.bz">support@mobify.bz</a></p></div>

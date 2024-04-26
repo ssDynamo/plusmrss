@@ -1,0 +1,41 @@
+:root {
+  --ion-safe-area-top: 20px;
+  --ion-safe-area-bottom: 22px;
+}
+
+ion-datetime {
+  height: auto;
+  width: auto;
+
+  max-width: 350px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(288px, 1fr));
+  grid-gap: 0 10px;
+}
+
+ion-modal {
+  --width: 290px;
+  --height: 382px;
+  --border-radius: 8px;
+}
+
+ion-modal ion-datetime {
+  height: 382px;
+}
+
+section {
+  border: 1px solid gray;
+  display: flex;
+  align-items: center ;
+  justify-content: space-between;
+  padding: 0 1rem;
+  max-width: 300px;
+  width: 100%;
+}
+
+ion-datetime {
+  width: 100%;
+}

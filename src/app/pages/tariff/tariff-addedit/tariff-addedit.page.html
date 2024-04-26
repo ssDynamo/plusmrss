@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot=start>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <span *ngIf="!model?._id">Add</span>
+      <span *ngIf="model?._id">Edit</span> Tariff
+    </ion-title>
+    <ion-buttons slot=end>
+       <ion-button (click)="dismiss()"><ion-icon name="close-outline"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form (ngSubmit)="formSubmit($event)"  ngNativeValidate>
+    <ion-row>
+      <ion-col size="12" size-sm="12" class="ng-select-col">
+        <ion-label class="mt-left">Tariff Type</ion-label>
+        <ng-select name=type [(ngModel)]="model.type" >
+          <ng-container *ngFor="let item of apiService.DBCache['METADATA_CACHE_LIST']['tariff_type']">
+            <ng-option [value]="item._id">{{item?.name}}</ng-option>
+          </ng-container>
+        </ng-select>
+    </ion-col>
+
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Name</ion-label>
+          <ion-input name=name [(ngModel)]="model.name" required placeholder="Enter Name"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="floating">Code</ion-label>
+          <ion-input type=code name=email [(ngModel)]="model.code" required></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="6" class="ion-toggle-col">
+        <ion-item>
+          <ion-label>Is Active ?</ion-label>
+          <ion-toggle slot=end name="isActive" [(ngModel)]="model.isActive"></ion-toggle>
+        </ion-item>
+
+        <ion-item style="display: none;">
+          <ion-label>Is Custom ?</ion-label>
+          <ion-toggle slot=end name="isCustom" [(ngModel)]="model.isCustom"></ion-toggle>
+        </ion-item>
+      </ion-col>
+
+    </ion-row>
+    <ion-row>
+        <ion-col size="12" size-sm="12">
+          <ion-item>
+            <ion-label position="floating" >Description</ion-label>
+            <ion-textarea placeholder="Enter Description"  name=description  [(ngModel)]="model.description"></ion-textarea>
+          </ion-item>
+        </ion-col>
+
+
+
+    </ion-row>
+
+    <json-editor  style="min-height: 500px;display:none"  *ngIf="JSONinitialData" [options]="editorOptions" [data]="JSONinitialData" (change)="showJson($event)"></json-editor>
+
+
+    <hr>
+    <br>
+    <ion-row>
+      <ion-col size=6><ion-button (click)="dismiss()" color=light expand=block>Cancel</ion-button></ion-col>
+      <ion-col size=6><ion-button type=submit expand=block>Save  <ion-spinner *ngIf="loading" name="lines-small"></ion-spinner></ion-button></ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>
+
+

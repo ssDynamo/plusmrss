@@ -1,0 +1,122 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Licences</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- <div style="text-align: center;padding-top:20%">
+    <h1> <ion-icon style="font-size:50px;color:var(--ion-color-primary)" name="construct-outline"></ion-icon> </h1> <h3>Module Under Construction... </h3>
+    </div> -->
+
+    <ion-row class="searchfilterrow">
+      <ion-col size=3>
+        <ion-label class="mt-left">Select By LeadOwner</ion-label>
+        <ng-select name=ati_approver [(ngModel)]="filtermodel.searchquser"  (change)="filter()" >
+          <ng-container *ngFor="let item of apiService.DBCache['USER_LIST']">
+            <ng-option [value]="item._id">{{item?.name}}</ng-option>
+          </ng-container>
+        </ng-select>
+     </ion-col>
+    <ion-col size=3>
+     <ion-label class="mt-left">Select By Customer</ion-label>
+     <app-customer-autocomplete *ngIf="!loading" [item]="model.customer" (newItemEvent)="model.customer=$event;getCustomer($event)"></app-customer-autocomplete>
+      <!-- <ng-select name=ati_approver [(ngModel)]="filtermodel.searchqcustomer"  (change)="filter()" >
+      <ng-container *ngFor="let item of apiService.DBCache['CUSTOMER_LIST']">
+        <ng-option [value]="item._id">{{item?.name}}</ng-option>
+      </ng-container>
+     </ng-select> -->
+    </ion-col>
+    <ion-col size=3 class="">
+      <ion-label class="mt-left">Select By Status</ion-label>
+        <ng-select name=ati_approver [(ngModel)]="filtermodel.searchqst"  (change)="filter()" >
+          <ng-container *ngFor="let item of licensestatus">
+            <ng-option [value]="item.name">{{item?.ids}}</ng-option>
+          </ng-container>
+        </ng-select>
+
+    </ion-col>
+
+      <ion-col size=3 class="">
+        <div class="flexcentercenter">
+        <ion-searchbar placeholder="PI Seq / Customer-Name / Tariff-Code"[(ngModel)]="filtermodel.q" (ionChange)="filter()"></ion-searchbar>
+        <!-- <ion-button class="button_add" color="primary" routerLink="/quotation/addedit">Add Quotation</ion-button> -->
+      </div>
+      </ion-col>
+    </ion-row>
+
+    <ngx-datatable
+  class="material"
+  [columnMode]="'force'"
+    [externalPaging]="true"
+    [count]="pagination.count"
+    [offset]="pagination.offset"
+    [limit]="pagination.limit"
+    [rows]="items"
+    (page)="pageCallback($event)"
+    [scrollbarH]="true"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+  >
+
+  <ngx-datatable-column name="PI Id" >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b>PI-Seq: {{row?.quotation_idseq}}<br>PI-No: {{row?.pi_no}}</b> <br>
+      <b>LO: {{row?.user?.name}}</b>
+      <hr>
+      <span>Created On: {{row?.quotation?.createdAt | date}}</span><br>
+    <span>Updated On: {{row?.quotation?.updatedAt | date}}</span>
+      </ng-template>
+  </ngx-datatable-column>
+
+
+   <ngx-datatable-column name="Customer" >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b>{{row?.customer?.name}}</b><br>
+      <span>Office Add: {{row?.customer?.address_1}}</span> <br>
+      <span>{{row?.customer?.address_2}}</span>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Licensee"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+
+      <b>{{row?.licensee_name}}</b><br>
+      <span>Operating Add: {{row?.licensee?.operating_address_1}}</span><br>
+      <span>{{row?.licensee?.operating_address_2}}</span>
+
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Tariff"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b> Code {{row?.code}} </b><br>
+    <b> S$ {{row?.cart_total_sub | number:'1.2-2':'en-US'}} </b><br>
+    <span>From: {{row?.start_date | date}}</span><br>
+    <span>To: {{row?.end_date | date}}</span>
+
+
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Actions" [width]="40" [frozenRight]="true">
+    <ng-template let-row="row"  ngx-datatable-cell-template >
+    <div class="tableactions">
+       <span  [routerLink]="'/quotation/addedit'" [queryParams]="{_id:row.quotation._id}" [state]="{item:row}" *ngIf="authService.checkPermission('licenses_edit')"> <ion-icon name="create-outline" ></ion-icon>Edit PI </span> &nbsp;
+      <span  [routerLink]="'/public/quotationtaxinvoice-view'" [queryParams]="{_id:row?.quotation?._id,view:'proformainvoice'}" [state]="{item:row?.quotation}">PI <ion-icon name="arrow-down-outline"></ion-icon></span> &nbsp;<br>
+
+      <span *ngIf="row?.quotation?.status=='paid'" [routerLink]="'/public/license-view'" [queryParams]="{_id:row?.quotation?._id,cartitem_seq:row?.cart_seq}" size=small  >LI <ion-icon name="arrow-down-outline"></ion-icon></span> &nbsp;
+      <span  [routerLink]="'/public/quotationtaxinvoice-view'" [queryParams]="{_id:row?.quotation?._id,view:'taxinvoice'}" [state]="{item:row?.quotation}">TI <ion-icon name="arrow-down-outline"></ion-icon></span> &nbsp;<br>
+      <span color=primary *ngIf="row?.quotation?.is_renewal==1">Renewed seq No:{{row?.quotation?.renewal_idseq}}</span><br>
+      <ion-button *ngIf="row?.quotation?.status=='paid' && row?.quotation?.is_renewal!=1" color=primary fill=outline (click)="send_notification(row)">Reminder</ion-button> <br>
+      <ion-button *ngIf="row?.quotation?.status=='paid' && row?.quotation?.is_renewal!=1" color=primary fill=outline (click)="renewal_pi(row)">Renewal</ion-button><br>
+
+
+    </div>
+    </ng-template>
+  </ngx-datatable-column>
+
+  </ngx-datatable>
+
+</ion-content>

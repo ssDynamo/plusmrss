@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Creditnotes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row class="nopaddingrow searchfilterrow">
+    <ion-col size=8> </ion-col>
+    <ion-col size=4 class="">
+      <div class="flexcentercenter">
+      <ion-searchbar placeholder="Credit No/Customer-Name"[(ngModel)]="filtermodel.q" (change)="filter()"></ion-searchbar>
+      <!-- <ion-button class="button_add" color="primary" (click)="presentRefundAddEdit()">Add Refund</ion-button> -->
+
+    </div>
+    </ion-col>
+
+  </ion-row>
+  <ngx-datatable
+  class="material"
+  [columnMode]="'force'"
+    [externalPaging]="true"
+    [count]="pagination.count"
+    [offset]="pagination.offset"
+    [limit]="pagination.limit"
+    [rows]="items"
+    (page)="pageCallback($event)"
+    [scrollbarH]="true"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+  >
+
+  <ngx-datatable-column name="Seq.No"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b>idseq#{{row?.idseq}}</b> <br>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Credit No."  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b>{{row?.creditno}}</b> <br>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Customer Name"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b>{{row?.customer_name}}</b>
+    </ng-template>
+  </ngx-datatable-column>
+
+
+  <ngx-datatable-column name="Credit amount" >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b>S${{row?.cn_amount | number:'1.2-2':'en-US'}}</b>
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-column name="Actions">
+    <ng-template let-row="row"  ngx-datatable-cell-template >
+      <ion-button color=primary  [routerLink]="'/public/credit-note'" [queryParams]="{_id:row?._id}" [state]="{item:row}">View Credit Note</ion-button>
+    </ng-template>
+  </ngx-datatable-column>
+ </ngx-datatable>
+</ion-content>

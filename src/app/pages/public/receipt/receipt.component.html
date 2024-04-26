@@ -1,0 +1,163 @@
+<ion-header style="display: block;">
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title style="margin-left: 20px;">{{docspecs}} #{{item?.idseq}}</ion-title>
+
+    <ion-buttons slot=end>
+      <!-- <button class="ion-button"
+      [printTitle]="docspecs?.title"
+      styleSheetFile="/assets/css/print.css"
+      printSectionId="print-section"
+      ngxPrint>Print</button> -->
+
+      <ion-button (click)="html2PDF(true)" color="primary">Download PDF</ion-button>
+
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class=parent_div >
+    <div id="print-section" style=" padding:30px;">
+   <table  >
+     <tr><td  width=30% style="vertical-align: middle;">
+      <div style="border-right:1px solid gray;">
+      <img  src="/assets/logos/mrss-logo.png" width="150"  />
+      </div>
+
+     </td>
+
+     <td width="70%" style="padding-left:20px;vertical-align: middle;">
+      <b>Music Rights (Singapore) Public Limited</b><br>
+      <span>4 Leng Kee Road #03-06/07 SiS Building</span><br>
+      <span>Singapore 159088</span><br>
+      <span>+65 64751181</span><br>
+      <span>enquiry@mrss.com.sg</span><br>
+      <span>www.mrss.com.sg</span><br>
+      <span> GST Registration No. :201824573H</span><br>
+      <span> Company Registration No. :201824573H</span>
+
+     </td>
+     </tr>
+   </table>
+   <!-- <h1 style="color: rgb(59, 111, 222);">Credit Note</h1> -->
+
+   <ion-title  >{{docspecs?.title}}</ion-title><br>
+
+   <table>
+     <tr>
+    <!-- <td width=50%>
+      <b>Credit To</b><br>
+      <span>{{item?.amount}}</span><br> -->
+      <!-- <span>{{item?.customer.address_1}}</span><br>
+      <span>{{item?.customer.address_2}}</span><br>
+      <span>Singapore &nbsp; {{item?.customer.postalcode}}</span> -->
+
+    <!-- </td> -->
+    <td width=100% style="text-align: center;">
+     <span><b>Receipt No : #{{item?.receipt_no}} </b><br></span>
+     <!-- <span><b>Receipt Date :</b> &nbsp; {{item?.createdAt| date}}</span><br> -->
+   </td>
+   </tr>
+  </table>
+
+  <hr style="border-bottom:1px solid black">
+
+<br>
+
+<table style="margin:0px auto;border:1px solid gray" border=1 cellpadding=3 cellspacing=3>
+  <tr>
+    <th>Transaction ID:</th>
+    <td>{{item?.idseq}}</td>
+  </tr>
+  <tr *ngIf="item?.bankstatement">
+    <th>Receipt Date:</th>
+    <td>{{item?.bankstatement?.value_date   | date}}</td>
+  </tr>
+  <tr *ngIf="!item?.bankstatement">
+    <th>Created Date / Status:</th>
+    <td>{{item?.createdAt | date}} / {{item?.status}}</td>
+  </tr>
+  <tr>
+    <th>Amount:</th>
+    <td>S${{item?.amount.toFixed(2)}}</td>
+  </tr>
+  <tr>
+    <th>Payment Method:</th>
+    <td>{{item?.payment_method}}</td>
+  </tr>
+  <tr>
+    <th>NEFT / Cheque / Demand Draft / Ref No:</th>
+    <td>{{item?.customer_reference}}</td>
+  </tr>
+  <tr>
+    <th>PI:</th>
+    <td>{{item?.quotation?.pi_no}}</td>
+  </tr>
+  <tr>
+    <th>Remark:</th>
+    <td>{{item?.remark}}</td>
+  </tr>
+  <tr>
+    <th>Customer Contact Details:</th>
+    <td>{{item?.quotation?.customer?.name}}<br>
+     <span *ngIf="item?.quotation?.customer?.email">Email: {{item?.quotation?.customer?.email}}</span> &nbsp; | <span *ngIf="item?.quotation?.customer?.mobile">Phone {{item?.quotation?.customer?.mobile}}</span>
+    </td>
+  </tr>
+</table>
+
+
+
+
+<!-- <hr style="border-bottom:1px dotted black;margin-top:5px;margin-bottom:5px"> -->
+ <table style="margin-right: 20px;">
+   <tr>
+    <td width=100%>
+      <span><b>Bank Details</b></span><br>
+      <span>Account Name: MRSS Public Limited</span><br>
+      <span>Bank Name: Hongkong and Shanghai Banking</span><br>
+      <span>Corporation Ltd (HSBC)</span><br>
+      <span> Account Number: 052-538832-002</span><br>
+      <span> Bank Code:7232</span><br>
+      <span>PayNow UEN: 201824573H</span>
+
+    </td>
+</tr>
+</table>
+
+
+<!-- <hr style="border-bottom:1px dotted black;margin-top:5px;margin-bottom:5px"> -->
+
+
+<table  style="margin:0px auto;border:1px solid gray;"  cellpadding=3 cellspacing=3>
+  <tr>
+  <td width=30% style="padding-right:15px;">
+    <hr style="border-bottom:1px dotted black;margin-top:100px;margin-bottom:5px">
+    <b>Approved By</b><br>
+   <span *ngIf="item?.user?.name"> {{item?.user?.name}}</span><br>
+    <span *ngIf="item?.user?.role?.name">{{item?.user?.role?.name}}<br></span>
+     <span *ngIf="item?.user?.email">{{item?.user?.email}}</span>
+   </td>
+
+
+  <td width=70% class="ion-text-center">
+   <!-- <b>PayNow<br>
+    <img src="/assets/images/mrssqrcode.jpg" style="max-width:90%">
+    <br>
+    <small>UEN: 201824573H </small></b> -->
+ </td>
+
+ </tr>
+
+</table>
+
+<hr style="border-bottom:1px dotted black;margin-top:5px;margin-bottom:5px">
+<div class="ion-text-center;" style="font-size:8px;text-align:center">
+  This is Computer generated {{docspecs?.title}}<br>
+  No Signature required
+</div>
+</div>
+</div>
+</ion-content>

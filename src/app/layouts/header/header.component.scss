@@ -1,0 +1,36 @@
+img {
+  height: 40px;
+}
+ion-header {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  .useractions{
+      display:none;
+  }
+}
+
+.stag {
+  // width: 80px;
+  // height: 70px;
+  background-color:yellow;
+  color: black;
+  font-weight: bold;
+  margin: auto;
+  padding: 15px;
+}
+
+.user-addedit-page {
+  height: 50%!important;
+  transform: translateY(100%);}
+
+  b.dblUnderlined {
+     border-top: 10px yellow double; ;
+  }
+
+@media only screen and (min-width: 1025px) {
+  ion-header {
+      .useractions{
+          display: flex;
+      }
+  }
+}

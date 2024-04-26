@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Transactions</ion-title>
+    <ion-buttons color=primary slot=end >
+      <ion-button color="primary" (click)="presentAddeditModal({})">+ Add</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+
+
+  <ion-row class="nopaddingrow searchfilterrow">
+    <ion-col size=7> </ion-col>
+    <ion-col size=5 class="">
+      <div class="flexcentercenter">
+      <ion-searchbar placeholder="Ref.No"[(ngModel)]="filtermodel.q" (ionChange)="filter()"></ion-searchbar>
+      <ion-button class="button_add" color="primary" (click)="runReconcillation()" *ngIf="authService.checkPermission('transaction_runreco')">Run Reconcillation</ion-button>
+
+    </div>
+    </ion-col>
+
+  </ion-row>
+  <ngx-datatable
+  class="material"
+  [columnMode]="'force'"
+    [externalPaging]="true"
+    [count]="pagination.count"
+    [offset]="pagination.offset"
+    [limit]="pagination.limit"
+    [rows]="items"
+    (page)="pageCallback($event)"
+    [scrollbarH]="true"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+  >
+
+  <ngx-datatable-column name="Details"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b>#{{row?.idseq}}</b> <br>
+      Ref No : {{row?.customer_reference}}<br>
+      {{row?.payment_method}}<br>
+      Receipt No :{{row?.receipt_no}}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Amount"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <b>S$ {{row?.amount   | number:'1.2-2':'en-US'}}</b>
+    </ng-template>
+  </ngx-datatable-column>
+
+
+  <ngx-datatable-column name="Quotation" >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+     <a [routerLink]="['/quotation/addedit']" [queryParams]="{_id:row.quotation?._id}" routerLinkActive="router-link-active"   > Quotation: #{{row?.quotation?.idseq}}</a><br>
+      For <b>{{row?.quotation.customer?.name}}</b><br>
+      By {{row?.quotation?.user?.name}}<br>
+      <a [href]="'/public/quotationtaxinvoice-view?view=proformainvoice&_id='+row?.quotation._id"  target=_blank routerLinkActive="router-link-active" > View Proforma Invoice</a>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Status"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+
+
+      <ion-chip [color]="row?.status=='success' || row?.status=='approved' ? 'success':'secondary'">
+        <ion-label>{{row?.status|titlecase}}</ion-label>
+      </ion-chip>
+<br>
+      {{row?.bankstatement?.narrative|titlecase}}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="User"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      {{row?.createdBy?.name}} <br>
+      Updated on : {{row?.createdAt|date}} <br>
+      <span *ngIf="row?.bankstatement">Bank Date :{{row?.bankstatement?.value_date | date}}</span>
+    </ng-template>
+  </ngx-datatable-column>
+
+
+
+
+
+
+  <ngx-datatable-column name="Actions" [width]="30" [frozenRight]="true">
+    <ng-template let-row="row"  ngx-datatable-cell-template >
+    <div class="tableactions">
+      <span  (click)="presentAddeditModal(row)" title="Edit" *ngIf="authService.checkPermission('transaction_edit') && row.status!='success'"> <ion-icon name="create-outline"></ion-icon> </span><br>
+      <ion-button color=primary  [routerLink]="'/public/receipt'" [queryParams]="{_id:row?._id}" [state]="{item:row}">Receipt</ion-button>
+    </div>
+    </ng-template>
+  </ngx-datatable-column>
+
+  </ngx-datatable>
+
+</ion-content>

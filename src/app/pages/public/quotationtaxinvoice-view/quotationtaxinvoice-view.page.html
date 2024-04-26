@@ -1,0 +1,280 @@
+<ion-header style="display: block;">
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{docspecs?.title}} #{{item?.idseq}}</ion-title>
+
+    <ion-buttons slot=end>
+      <button class="ion-button" [printTitle]="docspecs?.title" styleSheetFile="/assets/css/print.css"
+        printSectionId="print-section" ngxPrint style="font-size:16px;color: red ;">Print</button>
+
+      <ion-button (click)="downloadpdf(true ,'download')" color="primary">Download PDF</ion-button>
+      <!-- <ion-button *ngIf="view=='taxinvoice'" (click)="downloadpdf(true ,'emailsend')" color="primary">Send Email</ion-button> -->
+
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class=parent_div>
+    <div id="print-section" style=" padding:30px;font-size: 13px !important;">
+      <table>
+        <tr>
+          <td width=30% style="vertical-align: middle;">
+            <div style="border-right:1px solid gray;">
+              <img class="abcimg" src="{{apiUrl}}/assets/logos/mrss-logo.png" width="150" />
+            </div>
+          </td>
+
+          <td width="70%" style="padding-left:20px;vertical-align: middle;">
+            <b>Music Rights (Singapore) Public Limited</b><br>
+            <span>4 Leng Kee Road #03-06/07 SiS Building</span><br>
+            <span>Singapore 159088</span><br>
+            <span>+65 64751181</span><br>
+            <span>enquiry@mrss.com.sg</span><br>
+            <span> GST Registration No. :201824573H</span>
+          </td>
+        </tr>
+      </table>
+
+      <ion-title>{{docspecs?.title}}</ion-title><br>
+
+      <table>
+        <tr>
+          <td width=50%>
+            <b>Bill To</b><br>
+            <span>{{item?.customer.name}}</span><br>
+
+            <span>{{item?.customer.address_1}}</span><br>
+            <span>{{item?.customer.address_2}}</span><br>
+            <span>{{item?.customer.area}}</span><br>
+            <span>Singapore &nbsp; {{item?.customer.postalcode}}</span>
+
+          </td>
+          <td width=50%>
+            <!-- <b *ngIf="view=='taxinvoice'">{{docspecs?.title_no}} IN2111003</b><br> -->
+            <b *ngIf="view==='proformainvoice'">{{docspecs?.title_no}} {{item?.pi_no}}</b><br>
+
+            <b *ngIf="view==='taxinvoice'">{{docspecs?.title_no}} {{item?.invoice_no}} <br></b>
+            <span *ngIf="view==='taxinvoice'"><b>Invoice Date</b> &nbsp; {{item?.invoice_date| date}} <br></span>
+            <span *ngIf="view==='proformainvoice'"><b>DATE</b> &nbsp; {{item?.createdAt| date}} <br></span>
+
+            <!-- <span><b>DATE</b> &nbsp; {{item?.createdAt| date}}</span><br> -->
+            <span><b>TERMS</b> &nbsp; 30 Days</span><br>
+            <span *ngIf="view==='taxinvoice'"><b>PI Reference: </b>{{item?.pi_no}}<br></span>
+            <span><b>Status: </b>{{item?.status}} <br></span>
+            <ng-container *ngFor="let trs of log_transactions;let i = index">
+              <a [routerLink]="'/public/receipt'" [queryParams]="{_id:trs?._id}" [state]="{item:trs}"> <b>Receipt
+                  Reference {{i+1}} :</b> &nbsp; {{trs?.receipt_no }}</a>
+              <br>
+            </ng-container>
+            <br>
+
+
+
+          </td>
+        </tr>
+      </table>
+
+      <hr style="border-bottom:1px solid black">
+
+      <!-- <br> -->
+
+      <table class="tabheader" style="margin-right: 20px; margin-top: 5px;">
+        <tr>
+          <td width=10%> Activity </td>
+          <td width=60%> Description </td>
+          <td width=10% class="ion-text-end"> GST ({{item?.gst_percentage}}%) </td>
+          <td width=10% class="ion-text-end">Discount%</td>
+          <td width=10% class="ion-text-end"> Amount </td>
+        </tr>
+      </table>
+
+      <!-- <table *ngIf="pagebreak" style="margin-right: 20px;page-break-after:always;">
+    <tr class="tabdata" *ngFor="let ite of item?.items;let i=index" style="height: 105px;page-break-inside: avoid;">
+    <td width=20% style="border-bottom:1px dotted black;" > <b>{{ite.tariff.code}}</b>
+    <div class="nonprintitem" *ngIf="item?.status=='paid'"><ion-button [routerLink]="'/public/license-view'" [queryParams]="{_id:item?._id,cartitem_seq:i}" size=small  >View Licence</ion-button></div>
+  </td>
+    <td width=60% style="border-bottom:1px dotted black;"> {{ite.type.name}} <br>
+      <span> {{ite.tariff.name}}</span> <br>
+      <span>Brand : {{ite?.licensee?.name}}</span><br>
+              <!-- Fields--
+              <ng-container *ngFor="let itemfield of ite?.tariff?.specs?.fields">
+
+                <ng-container *ngFor="let mitemfield of itemfield?.matrix.dimensions">
+                  <ng-container *ngIf="mitemfield?.value">
+                    <span *ngIf="mitemfield?.type=='range' && mitemfield?.name !='no_of_rooms' && mitemfield?.name !='no_of_rooms'">{{mitemfield?.label}} : {{mitemfield?.value}}</span>
+                    <span *ngIf="mitemfield?.type=='select'">{{mitemfield?.label}} : {{mitemfield?.value?.name}}</span>
+                  </ng-container>
+                 
+                </ng-container>
+
+              </ng-container>
+
+              
+
+              <ng-container *ngIf="ite?.remark"><br><span>Remark</span> : {{ite?.remark}}</ng-container>
+
+
+    </td>
+    <td width=10% style="border-bottom:1px dotted black;" class="ion-text-end"> ${{ite?.cart_total_gst | number:'1.2-2':'en-US'}} </td>
+    <td width=10% style="border-bottom:1px dotted black;" class="ion-text-end"> ${{ite.cart_total_sub | number:'1.2-2':'en-US'}} </td>
+    </tr>
+  </table> -->
+
+      <table style="margin-right: 20px;">
+        <tr class="tabdata" *ngFor="let ite of item?.items;let i=index" style="height:auto;page-break-inside: avoid;">
+          <td width=10% style="border-bottom:1px dotted black;"> <b>{{ite.tariff.code}}</b>
+            <br><br>
+            <div class="nonprintitem" *ngIf="item?.status==='paid'">
+              <ion-button [routerLink]="'/public/license-view'" [queryParams]="{_id:item?._id,cartitem_seq:i}"
+                size=small>View Licence</ion-button>
+                <!-- <a class="button" href="{{apiUrl}}/pdf/licenseview?_id={{item?._id}}&cartitem_seq={{i}}" target="_blank" > Download Licence </a> -->
+            </div>
+          </td>
+          <td width=60% style="border-bottom:1px dotted black;"> {{ite.type.name}} <br>
+            <span> {{ite.tariff.name}}</span> <br>
+
+            <!-- Fields-->
+            <ng-container *ngFor="let itemfield of ite?.tariff?.specs?.fields">
+
+              <ng-container *ngFor="let mitemfield of itemfield?.matrix.dimensions">
+                <ng-container *ngIf="mitemfield?.value">
+                  <span
+                    *ngIf="mitemfield?.type==='range' && mitemfield?.name !=='no_of_rooms' && mitemfield?.name !=='no_of_rooms'">{{mitemfield?.label}}
+                    : {{mitemfield?.value}} <br></span>
+                  <span *ngIf="mitemfield?.type==='select'">{{mitemfield?.label}} : {{mitemfield?.value?.name}}
+                    <br></span>
+                </ng-container>
+
+              </ng-container>
+
+            </ng-container>
+
+            From : <b>{{ite?.start_date |date}} <br></b>
+            To : <b>{{ite?.end_date|date}} <br></b>
+            <ng-container *ngIf="ite?.remark"><span>Remark</span> : {{ite?.remark}} <br></ng-container>
+            <hr style="border-bottom:1px dotted black;margin-top:1px;">
+            <span>Licensee Name : {{ite?.licensee?.name}} <br></span>
+            <span>Address : {{ite?.licensee?.operating_address_1}} {{ite?.licensee?.operating_address_2}} <br></span>
+            <span>postalcode : {{ite?.licensee?.operating_postalcode}} <br></span>
+
+
+          </td>
+          <td width=10% style="border-bottom:1px dotted black;" class="ion-text-end"> ${{ite?.cart_total_sub *
+            (ite.gst_percentage / 100) |
+            number:'1.2-2':'en-US'}} </td>
+          <td *ngIf="ite?.cart_discount_percentage" width=10% style="border-bottom:1px dotted black;"
+            class="ion-text-end"> {{ite?.cart_discount_percentage}}%
+            <br>Discount<br>After Discount
+          </td>
+          <td *ngIf="!ite?.cart_discount_percentage" width=10% style="border-bottom:1px dotted black;"
+            class="ion-text-end"> 
+          </td>
+
+          <td *ngIf="!ite.cart_discount_percentage" width=10% style="border-bottom:1px dotted black;"
+            class="ion-text-end"> ${{ite.cart_total_sub
+            |
+            number:'1.2-2':'en-US'}}
+          </td>
+          <td *ngIf="ite.cart_discount_percentage" width=10% style="border-bottom:1px dotted black;"
+            class="ion-text-end"> ${{ite.cart_total_without_discount
+            | number:'1.2-2':'en-US'}}
+            <br> ${{ite?.discount | number:'1.2-2':'en-US'}}
+            <br> ${{ite.cart_total_sub | number:'1.2-2':'en-US'}}
+          </td>
+        </tr>
+      </table>
+
+
+
+
+      <!-- <hr *ngIf="pagebreak"> -->
+      <table style="margin-right: 20px;">
+        <tr style="height: 90px;page-break-inside: avoid;">
+          <td width=60%>
+            <span><b>Bank Details</b></span><br>
+            <span>Account Name: MRSS Public Limited</span><br>
+            <span>Bank Name: Hongkong and Shanghai Banking</span><br>
+            <span>Corporation Ltd (HSBC)</span><br>
+            <span> Account Number: 052-538832-002</span><br>
+            <span> Bank Code:7232</span>
+
+          </td>
+          <td width=30%>
+            <b>SUB TOTAL </b><br>
+            <span *ngIf="item?.discount_percentage>0">DISCOUNT ({{item?.discount_percentage}}%) <br></span>
+            <span>GST TOTAL ({{item?.gst_percentage}}%)</span><br>
+            <span>TOTAL</span><br>
+            <span>BALANCE DUE</span>
+          </td>
+
+          <td width=10% class="ion-text-end">
+            ${{item?.total_sub | number:'1.2-2':'en-US'}} <br>
+            <span *ngIf="item?.discount_percentage>0">S$ {{item?.total_discount | number:'1.2-2':'en-US'}} <br></span>
+            ${{item?.total_gst | number:'1.2-2':'en-US'}} <br>
+            ${{item?.total | number:'1.2-2':'en-US'}} <br>
+            <span class="boldtitle">S${{remainingPayment | number:'1.2-2':'en-US'}}</span>
+          </td>
+        </tr>
+      </table>
+
+
+      <hr style="border-bottom:1px dotted black;margin-top:2px;margin-bottom:2px">
+
+
+      <table style="page-break-inside: avoid;">
+        <tr>
+          <td width=80% style="padding-right:15px;">
+            <b>Terms & Conditions</b><br>
+            <!-- <ng-container >
+    <div [innerHTML]="docspecs?.termsHTML"></div>
+  </ng-container> -->
+            <ng-container *ngIf="view ==='proformainvoice'">
+              <span class="txt-align">
+                As the above licence(s) fee includes GST, we will proceed to issue both our tax invoice and the
+                requisite licence upon receipt of the licence fee from you.
+              </span><br>
+              <span class="txt-align">
+                We hope to receive the above-mentioned amount within 30 days from the date of this invoice as stipulated
+                in the Terms and Conditions of the application form. Please note that MRSS reserves the right to charge
+                interest for late payment at the rate of 1% per month or to date of full payment after 1% per month.
+              </span><br>
+              <span style="color: red;text-align: center;">
+                Please indicate the Proforma Invoice number when making payment.
+              </span>
+            </ng-container>
+            <ng-container *ngIf="view === 'taxinvoice'">
+              <span class="txt-align">
+                Please note that the requisite licence(s) can only be issued once the payment has been received.
+              </span><br>
+              <span style="color: red;text-align: center;">
+                Please indicate the Proforma Invoice number or Tax Invoice number when making payment.
+              </span>
+            </ng-container>
+            <br>
+            <br>
+            <b>Licence Executive:</b><br>
+            <span *ngIf="item?.user?.name"> {{item?.user?.name}}</span>,<br>
+            <span *ngIf="item?.user?.role?.name">{{item?.user?.role?.name}},<br></span>
+            <span *ngIf="item?.user?.email">{{item?.user?.email}}</span>
+          </td>
+
+
+          <td width=20% class="ion-text-center">
+            <b>PayNow<br>
+              <img src="{{apiUrl}}/assets/images/mrssqrcode.jpg" style="max-width:90%">
+              <br>
+              <small>UEN: 201824573H </small></b>
+          </td>
+
+        </tr>
+
+      </table>
+
+    </div>
+  </div>
+
+
+</ion-content>

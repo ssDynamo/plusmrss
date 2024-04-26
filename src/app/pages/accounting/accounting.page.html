@@ -1,0 +1,41 @@
+<ion-header style="display: block;">
+
+  <ion-segment (ionChange)="segmentChanged($event)" [(ngModel)]="showpage">
+    <ion-segment-button value="transactions" *ngIf="authService.checkPermission('transaction_list')">
+      <ion-label>Transactions</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="bankstatement" *ngIf="authService.checkPermission('bankstatement_list')">
+      <ion-label>Bank Statement</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="creditnotes" *ngIf="authService.checkPermission('creditenote_list')">
+      <ion-label>Credit Notes</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="refunds"  *ngIf="authService.checkPermission('refund_list')">
+      <ion-label>Refunds</ion-label>
+    </ion-segment-button>
+
+  </ion-segment>
+</ion-header>
+
+<ion-content>
+
+ <div class="tab" [hidden]="showpage!='transactions'" *ngIf="authService.checkPermission('transaction_list')">
+<app-transaction-list ></app-transaction-list>
+ </div>
+
+
+ <div class="tab" [hidden]="showpage!='bankstatement'" *ngIf="authService.checkPermission('bankstatement_list')">
+  <app-bankstatement-list ></app-bankstatement-list>
+  </div>
+
+  <div class="tab" [hidden]="showpage!='creditnotes'" *ngIf="authService.checkPermission('creditenote_list')">
+    <app-creditnote-list ></app-creditnote-list>
+  </div>
+
+  <div class="tab" [hidden]="showpage!='refunds'" *ngIf="authService.checkPermission('refund_list')">
+    <app-refund-list ></app-refund-list>
+  </div>
+
+</ion-content>

@@ -1,0 +1,70 @@
+
+
+<ion-content [fullscreen]=true>
+
+  <div class="paddiv"  >
+
+    <ion-card class="loginsignupcard">
+
+      <div style="text-align:center;height:50px; margin-bottom: 25px; margin-top: 25px;">
+        <img _ngcontent-emv-c133="" src="/assets/logos/mrss-logo.png" class="cursor" style="border-right: 1px solid #888; padding-right: 7px; height:50px">
+        <!----><img _ngcontent-emv-c133="" class="cursor" style="padding-left: 7px;height:50px" src="/assets/logos/plus-logo.png">
+        <br>
+
+
+      </div>
+
+      <h3>Login</h3>
+      <ion-card-content >
+
+
+  <form   (ngSubmit)="formSubmit($event)" ngNativeValidate>
+    <ion-list class="ion-no-margin" lines="full">
+      <ion-item>
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input
+          type="email"
+          required
+          name="mobile"
+          [(ngModel)]="model.email"
+          [placeholder]="'Please enter Email'"
+        ></ion-input>
+      </ion-item>
+
+
+      <ion-item>
+        <ion-label position="floating" >Password</ion-label>
+        <ion-row>
+          <ion-col  size="10" size-sm="10">
+            <ion-input
+            [type]="passwordType"
+            required
+            name="password"
+            [(ngModel)]="model.password"
+            [placeholder]="'Please enter Password'"
+          >
+        </ion-input>
+          </ion-col>
+          <ion-col size="2" size-sm="2">
+            <ion-button  (click)='hideShowPassword()' fill="clear">
+              <ion-icon item-end slot="icon-only" [name]="passwordIcon"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-item>
+    </ion-list>
+
+    <ion-button
+      style="margin-bottom: 10px"
+      expand="block"
+      size="medium"
+      type=submit
+      >Login
+      <ion-spinner *ngIf="loading" name="lines-small"></ion-spinner>
+    </ion-button>
+  </form>
+  </ion-card-content>
+  </ion-card>
+  </div>
+
+</ion-content>

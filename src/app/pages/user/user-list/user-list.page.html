@@ -1,0 +1,91 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Users</ion-title>
+    <ion-buttons color=primary slot=end >
+      <ion-button color="primary" (click)="presentAddeditModal({})">+ Add</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+
+
+    <ion-row class="nopaddingrow searchfilterrow">
+      <ion-col size=8> </ion-col>
+      <ion-col size=4 class="">
+        <div class="flexcentercenter">
+        <ion-searchbar placeholder="Name / Email"[(ngModel)]="filtermodel.q" (ionChange)="filter()"></ion-searchbar>
+        <ion-button class="button_add" color="primary" (click)="presentAddeditModal({})" *ngIf="authService.checkPermission('user_add')">Add User</ion-button>
+      </div>
+      </ion-col>
+
+    </ion-row>
+  <ngx-datatable
+  class="material"
+  [columnMode]="'force'"
+    [externalPaging]="true"
+    [count]="pagination.count"
+    [offset]="pagination.offset"
+    [limit]="pagination.limit"
+    [rows]="items"
+    (page)="pageCallback($event)"
+    [scrollbarH]="true"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+  >
+
+   <ngx-datatable-column name="Name" >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+
+      <span [ngClass]="row?.isActive?'useractive':'userinactive'" [title]="row?.isActive?'':'InActive User'"><b>{{row?.name}}</b></span>
+      <br>
+      <a [href]="'mailto:'+row?.email">{{row?.email}}</a>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Role"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+
+      <b>{{row?.role?.name}}</b><br>
+      {{row?.region?.name}}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Reporting To"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+     {{row?.reporting_manager?.name}}<br>
+     <a [href]="'mailto:'+row?.reporting_manager?.email">{{row?.reporting_manager?.email}}</a>
+
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Approvers"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+     <!-- <span *ngIf="row?.discount_approver">Discount : {{row?.discount_approver?.name}}<br></span> -->
+     <span *ngIf="row?.discount_approvers.length > 0">Discount :
+       <span *ngFor="let da of row.discount_approvers">
+        {{da.name}},
+       </span>
+       <br></span>
+
+     <span *ngIf="row?.ati_approver"> ATI : {{row?.ati_approver?.name}}</span>
+
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Actions" [width]="30" [frozenRight]="true" *ngIf="authService.checkPermission('user_edit')">
+    <ng-template let-row="row"  ngx-datatable-cell-template >
+    <div class="tableactions">
+      <span (click)="presentAddeditModal(row)" title="Edit" > <ion-icon name="create-outline"></ion-icon> </span>
+    </div>
+    </ng-template>
+  </ngx-datatable-column>
+
+  </ngx-datatable>
+
+</ion-content>

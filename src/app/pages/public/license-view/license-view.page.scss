@@ -1,0 +1,92 @@
+.parent_div{
+    margin:0px;
+    border:1px solid gray;
+    padding:5px;
+    min-width:794px;
+    box-shadow: 2px 2px 2px gray;
+
+}
+
+#print-section2{
+   padding:25px;
+   width:794px;
+   height:1124px;
+   background-color: #deedf5;
+}
+
+.header{
+  margin-left: 70px;
+  margin-right: 300px;
+}
+.logo{
+  margin-left: 40px;
+}
+
+.vl {
+  border-left: 1px solid gray;
+  height: 110px;
+  left: 40%;
+  margin-left: -188px;
+  margin-right: 10px;
+  top: 0;
+}
+
+.boldtitle{
+  font-weight:bold;
+  font-size:large;
+}
+
+
+.tabheader{
+   background-color: lightgray;
+}
+
+.tabdata{
+  border-top:1px dotted gray;
+}
+
+
+table{
+  width:100%;
+}
+td,th{
+  vertical-align: baseline;
+}
+
+.fieldname{
+font-style: italic;
+padding-top:8px;
+padding-bottom:3px;
+}
+
+.fieldvalue{
+  padding-top:3px;
+  padding-bottom:8px;
+  font-weight: bold;
+  border-bottom:1px solid black;
+
+}
+
+.smalltext{
+  font-size:10px;
+}
+
+.boldtext{
+  font-weight: bold;
+}
+
+.qrclass{
+  // margin:-5px;
+  // width: 35%;
+  height: 140px !important;
+  width: 130px !important;
+
+}
+
+.widthadjust1{
+  width:1201px;
+}
+
+.widthadjust2{
+  width:1203px;
+}

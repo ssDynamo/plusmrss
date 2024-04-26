@@ -1,0 +1,115 @@
+<ng-container *ngIf="model.quotation && cnmodel.quotation.type != 'credit'">
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot=start>
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
+      <ion-title>
+        <span>Create Credit Note</span>
+      </ion-title>
+      <ion-buttons slot=end>
+         <ion-button (click)="dismiss()"><ion-icon name="close-outline"></ion-icon></ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <form (ngSubmit)="Requestsubmit($event)"  ngNativeValidate>
+      <ion-row>
+      <ion-col size="12" size-sm="12" style="max-height:500px;overflow-x: scroll;overflow-y: auto;">
+        <table style="width:98%;margin: auto;" cellspacing=2 cellpadding=2>
+          <tr>
+            <th></th>
+            <th>Info</th>
+            <th>Total</th>
+            <!-- <th>Remark</th> -->
+            <th>Request sent by</th>
+            <th>customer</th>
+
+          </tr>
+
+          <tr *ngFor="let data of model?.quotation.items;let i = index">
+            <td>
+              <ion-checkbox  [disabled]="data?.disabled" (ionChange)="check($event,i)" [checked]="data.is_creditnote"></ion-checkbox>
+            </td>
+            <td>{{data.tariff.code}}<br>{{data.licensee.name}}</td>
+            <td>S$ {{data.cart_total_sub | number:'1.2-2':'en-US'}}</td>
+            <!-- <td>
+              <select class="form-control" name=remark placeholder="Select Remark">
+              <ng-container>Remark
+                <option value="Cancellation of Event">Cancellation of Event</option>
+                <option value="Event Rescheduled">Event Rescheduled</option>
+                <option value="Wrong calculations of Fees">Wrong calculations of Fees</option>
+                <option value="Number of Licenses are reduced">Number of Licences are reduced</option>
+              </ng-container>
+            </select>
+            </td> -->
+            
+            <td>{{model.quotation.user.name}}</td>
+            <td>{{data.licensee.name}}</td>
+          </tr>
+        </table>
+      </ion-col>
+
+      <ion-col size="12" size-sm="12" *ngIf="model.status=='pending' || !model.status || model.status=='forward'">
+        <ion-item>
+          <ion-label position="stacked">Remark</ion-label>
+          <ion-textarea
+            name="Remark"
+            [(ngModel)]="model.remarkmsg"
+            placeholder="Enter Remark"
+          ></ion-textarea>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    
+   
+   
+      <ion-row>
+        <ion-col size=6><ion-button (click)="dismiss()" color=light expand=block>Cancel</ion-button></ion-col>
+        <ion-col size=6><ion-button [disabled]="disable_credit_note_button" type=submit expand=block>Send Credit Note Request<ion-spinner *ngIf="loading" name="lines-small"></ion-spinner></ion-button></ion-col>
+       </ion-row>
+    </form>
+
+
+  </ion-content>
+</ng-container>
+
+<ng-container *ngIf="cnmodel.quotation.type == 'credit'">
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot=start>
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
+      <span>
+        <span><b>Credit No:</b> {{cnmodel.quotation.creditno}}</span><br>
+        <span>Created At: {{cnmodel.quotation.createdAt | date: 'dd/MM/yyyy'}}</span>
+      </span>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <table class="tabheader" style="width:95%;margin: auto;" cellspacing=2 cellpadding=2>
+      <tr style="background-color: #ccd7e8;">
+      <td width=30%> Activity </td>
+      <td width=50%> Description </td>
+      <td width=20% class="+"> Amount </td>
+    </tr>
+    <tr  *ngFor="let ite of data?.items;let i=index">
+      <ng-container *ngIf="ite?.is_creditnote == true">
+        <td width=30%  > <b>{{ite.tariff.code}}</b>
+        </td>
+         <td width=50%> {{ite.type.name}} <br>
+           <b> {{ite.tariff.name}}</b> <br>
+         </td>
+         <td width=20% class="ion-text-end"> ${{ite.cart_total_sub | number:'1.2-2':'en-US'}} </td>
+
+      </ng-container>
+
+    </tr>
+    </table>
+  </ion-content>
+
+
+
+
+</ng-container>

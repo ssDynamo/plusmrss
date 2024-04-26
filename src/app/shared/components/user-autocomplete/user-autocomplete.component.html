@@ -1,0 +1,25 @@
+
+      <ng-select 
+      [items]="apiService.DBCache['USER_LIST'] " 
+      bindLabel="name" 
+      [trackByFn]="apiService.NgSelecttrackByFn"   
+      (change)="setNewItem($event)"
+(clear)="selectedItem={};"
+[(ngModel)]="selectedItem" >
+      <ng-template ng-option-tmp ng-label-tmp let-item="item" let-index="index" let-search="searchTerm">
+        <div style="margin: 2px 0px;" class="card" *ngIf="item?.name">
+            <div style="white-space: normal;">
+                <ion-card-subtitle style="color: black;"><b>{{item.name}}</b> : <span style="font-weight: normal;">{{item?.role?.name}}</span></ion-card-subtitle> 
+               
+            </div>
+        </div>
+      </ng-template>
+
+      <ng-template ng-typetosearch-tmp>
+        <div class="ng-option disabled">
+            Start typing...
+        </div>
+    </ng-template>
+
+
+    </ng-select>

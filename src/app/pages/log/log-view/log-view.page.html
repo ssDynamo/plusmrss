@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot=start>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <span>Activity Log</span>
+    </ion-title>
+    <ion-buttons slot=end>
+       <ion-button (click)="dismiss()"><ion-icon name="close-outline"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-card class="sumcard" *ngFor="let item of items">
+     <h3>{{item?.user?.name}}  - {{item?.action}} </h3>
+     Created On :{{item?.createdAt | date:'short'}}<br>
+     <b>Total : S$ {{item?.data.total}}</b>
+
+
+     <ion-accordion-group *ngIf="item?.data?.content">
+      <ion-accordion >
+        <ion-item slot="header">
+          <ion-label>Mail Details</ion-label>  
+        </ion-item>
+        
+        <ion-list slot="content">
+          <ion-button (click)="html2PDF(true, item)" color="primary">Print</ion-button>
+          <ion-row id="print-section">
+            <ion-col size="12" style="padding: 50px 15px;">
+              <div [innerHtml]="item?.data?.content"></div>
+            </ion-col>
+          </ion-row>
+           </ion-list>
+      </ion-accordion>
+
+      </ion-accordion-group>
+
+
+
+  </ion-card>
+
+</ion-content>

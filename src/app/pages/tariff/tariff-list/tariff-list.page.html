@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Tariff</ion-title>
+    <ion-buttons color=primary slot=end >
+      <ion-button color="primary" (click)="presentAddeditModal({})">+ Add</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+
+
+    <ion-row class="nopaddingrow searchfilterrow">
+      <ion-col size=8> </ion-col>
+      <ion-col size=4>
+        <div class="flexcentercenter">
+          <ion-searchbar placeholder="Tariff Code"[(ngModel)]="filtermodel.q" (ionChange)="filter()"></ion-searchbar>
+        <ion-button class="button_add" color="primary" (click)="presentAddeditModal({})" *ngIf="authService.checkPermission('tariff_add')">Add Tariff</ion-button>
+        </div>
+      </ion-col>
+    </ion-row>
+  <ngx-datatable
+  class="material"
+  [columnMode]="'force'"
+    [externalPaging]="true"
+    [count]="pagination.count"
+    [offset]="pagination.offset"
+    [limit]="pagination.limit"
+    [rows]="items"
+    (page)="pageCallback($event)"
+    [scrollbarH]="true"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+  >
+
+  <ngx-datatable-column name="Name" >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+
+      <span [ngClass]="row?.isActive?'active':'inactive'" [title]="row?.isActive?'':'InActive'"> <b>{{row?.code}} : {{row?.name}}</b></span>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Type"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      {{row?.type?.name}}
+    </ng-template>
+  </ngx-datatable-column>
+
+
+
+  <ngx-datatable-column name="Actions" [width]="30" [frozenRight]="true" *ngIf="authService.checkPermission('tariff_edit')">
+    <ng-template let-row="row"  ngx-datatable-cell-template >
+    <div class="tableactions">
+      <span (click)="presentAddeditModal(row)" title="Edit" > <ion-icon name="create-outline"></ion-icon> </span>
+    </div>
+    </ng-template>
+  </ngx-datatable-column>
+
+  </ngx-datatable>
+
+</ion-content>

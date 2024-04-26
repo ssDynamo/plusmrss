@@ -1,0 +1,276 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      <span *ngIf="model.type == 'cancelpi'">Cancel PI Request&nbsp; #{{model.idseq}}</span>
+      <span *ngIf="model.type == 'discount'">Discount Request</span>
+      <span *ngIf="model.type == 'changepi'">Change PI Request</span>
+      <span *ngIf="model.type == 'ati'">ATI Request</span>
+      <span *ngIf="model.type == 'cn'">Credit Note Request</span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()"
+        ><ion-icon name="close-outline"></ion-icon
+      ></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngIf="model.type == 'discount'">
+    <ion-card-header>
+      <ion-row>
+        <ion-col size=12>
+          <ion-card-subtitle>{{cart_item?.type?.name}}</ion-card-subtitle>
+          <ion-card-title>{{cart_item?.tariff?.code}} : {{cart_item?.tariff?.name}}</ion-card-title>
+          <span>Licensee : {{cart_item?.licensee?.name}}<br></span>
+          <span>Location : {{cart_item?.licensee?.operating_address_1}} {{cart_item?.licensee?.operating_address_2}}</span>
+        </ion-col>
+      </ion-row>
+
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-row>
+        <ion-col size=12>
+          <!-- Fields-->
+          <ng-container *ngFor="let itemfield of cart_item?.tariff?.specs?.fields">
+
+            <ng-container *ngFor="let mitemfield of itemfield?.matrix.dimensions">
+              <ng-container *ngIf="mitemfield?.value">
+                <b *ngIf="mitemfield?.type=='range'">{{mitemfield?.label}} : {{mitemfield?.value}}<br></b>
+                <b *ngIf="mitemfield?.type=='select'">{{mitemfield?.label}} : {{mitemfield?.value?.name}}<br></b>
+              </ng-container>
+            </ng-container>
+
+          </ng-container>
+          <!-- End Of Fields-->
+          From : <b>{{cart_item?.start_date |date}}</b>
+          To : <b>{{cart_item?.end_date|date}}</b>
+
+          <ng-container *ngIf="cart_item.cart_discount_percentage">
+            <br>Discount <b>{{cart_item.cart_discount_percentage}}</b>%
+          </ng-container>
+
+          <hr>
+          <ng-container *ngIf="cart_item?.remark">
+            Remark:
+            <ion-note><i>{{cart_item?.remark}}</i></ion-note>
+          </ng-container>
+        </ion-col>
+        <!-- <ion-col size=6 style="text-align: right;">
+          <span style="font-size:2.5em">S${{cart_item?.cart_total_sub | number:'1.2-2':'en-US'}}</span>
+        </ion-col> -->
+      </ion-row>
+
+    </ion-card-content>
+
+  </ion-card>
+  <form (ngSubmit)="formSubmit($event)" ngNativeValidate>
+    <ion-row >
+      <ion-col size="12" size-sm="12" *ngIf="model?._id">
+        <ion-item>
+          <ion-label position="stacked">Status</ion-label>
+          <ion-input disabled [value]="model?.status"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="12" *ngIf="model.status == 'pending'">
+        <ion-item>
+          <ion-label position="stacked" *ngIf="model?.type == 'discount'"
+            >Discount Approver</ion-label
+          >
+          <ion-label position="stacked" *ngIf="model?.type == 'changepi'"
+            >Change Request Approver</ion-label
+          >
+          <ion-label position="stacked" *ngIf="model?.type == 'cancelpi'"
+            >Cancel Request Approver</ion-label
+          >
+          <ion-label position="stacked" *ngIf="model?.type == 'ati'"
+            >ATI Request Approver</ion-label
+          >
+          <ion-label position="stacked" *ngIf="model?.type == 'cn'"
+            >Credit Note Request Approver</ion-label
+          >
+          <ion-input disabled [value]="model?.toUser?.name"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="12">
+        <ion-item  *ngIf="model.type == 'discount'">
+          <ion-label position="stacked">Request Discount (%)</ion-label>
+          <ion-input
+            name="name"
+            [(ngModel)]="model.value"
+            required
+            placeholder="Enter Discount"
+            required
+          ></ion-input>
+        </ion-item>
+
+        <ion-item  *ngIf="model.type != 'discount' && model?.type != 'cn'">
+          <ion-label position="stacked">PI Value</ion-label>
+          <ion-input
+            name="name"
+            [(ngModel)]="model.value"
+            required
+            disabled
+            required
+          ></ion-input>
+        </ion-item>
+
+
+      </ion-col>
+
+      <!-- <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">License Executive Remark</ion-label>
+          <ion-textarea
+            name="fromRemark"
+            [(ngModel)]="model.fromRemark"
+            placeholder="Enter Remark"
+          ></ion-textarea>
+        </ion-item>
+      </ion-col> -->
+<!-- 
+      <ion-col size="12" size-sm="12" *ngIf="canshow_approvebutton">
+        <ion-item>
+          <ion-label position="stacked">Remark</ion-label>
+          <ion-textarea
+            name="toRemark"
+            [(ngModel)]="model.toRemark"
+            placeholder="Enter Remark"
+          ></ion-textarea>
+        </ion-item>
+      </ion-col> -->
+      <ion-col size="12" size-sm="12" *ngIf="model?.type == 'cn'" style="max-height:500px;overflow-x: scroll;overflow-y: auto;">
+       <!-- // <div > -->
+          <table style="width:98%;margin: auto;" cellspacing=2 cellpadding=2>
+            <tr>
+              <th></th>
+              <th>Info</th>
+              <th>Total</th>
+              <th>Remark</th>
+              <!-- <th>Requeszt sent by</th>
+              <th>customer</th> -->
+    
+            </tr>
+    
+            <tr *ngFor="let data of model?.items;let i = index">
+              <td>
+                <ion-checkbox  [disabled]="true"  [checked]="data.is_creditnote"></ion-checkbox>
+              </td>
+              <td>{{data.tariff.code}}<br>{{data.licensee.name}}</td>
+              <td>S$ {{data.cart_total_sub | number:'1.2-2':'en-US'}}</td>
+              <td>
+                <select class="form-control" [disabled]="true" name=remark placeholder="Select Remark">
+                <ng-container>Remark
+                  <option value="Cancellation of Event">Cancellation of Event</option>
+                  <option value="Event Rescheduled">Event Rescheduled</option>
+                  <option value="Wrong calculations of Fees">Wrong calculations of Fees</option>
+                  <option value="Number of Licenses are reduced">Number of Licences are reduced</option>
+                </ng-container>
+              </select>
+              </td>
+              <!-- <td>{{data.licensee.name}}</td>
+              <td>{{model.quotation.user.name}}</td> -->
+    
+            </tr>
+          </table>
+        <!-- </div> -->
+      </ion-col>
+
+      <ion-col size="12" size-sm="12" *ngIf="model.status=='pending' || !model.status || model.status=='forward'">
+        <ion-item>
+          <ion-label position="stacked">Remark</ion-label>
+          <ion-textarea
+            name="Remark"
+            [(ngModel)]="model.remarkmsg"
+            placeholder="Enter Remark"
+          ></ion-textarea>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size=12 size-sm="12" style="margin: 0px 20px;" *ngIf="model.remark.length>0">
+          <ion-label>Remark</ion-label>
+
+          <ng-container *ngFor="let r of model.remark">
+            <ion-card-subtitle> {{r?.user?.name}} Remark <span *ngIf="r.status"> Status: {{r?.status}}</span></ion-card-subtitle>
+            <small>{{r?.remark}}<br></small>
+           
+          </ng-container>    
+      </ion-col>
+
+
+      <ion-col size="12" size-sm="12" *ngIf="model?.type == 'ati'" style="margin-left: 13px;">
+        <ion-label style="display: block;">Payment Date </ion-label>
+        <input placeholder="Select End Date" class="textbox-n" type="date" required name=payment_date
+          [(ngModel)]="model.payment_date" [disabled]="payBtn" id="date" style="width: 200px;">
+     </ion-col>
+    </ion-row>
+
+  
+
+    <hr />
+
+
+    <ion-row *ngIf="showSave" >
+      <ion-col size="6"
+        ><ion-button (click)="dismiss(false)" color="light" expand="block"
+          >Cancel</ion-button
+        ></ion-col
+      >
+      <ion-col size="6"
+        ><ion-button type="submit" expand="block"
+          >Save
+          <ion-spinner
+            *ngIf="loading"
+            name="lines-small"
+          ></ion-spinner></ion-button
+      ></ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="canshowactionbuttons" >
+      <ion-col size="4"
+        ><ion-button (click)="dismiss(false)" color="light" expand="block"
+          >Cancel</ion-button
+        ></ion-col
+      >
+      <ion-col size="4"
+        ><ion-button
+          *ngIf="canshow_approvebutton"
+          type="submit"
+          expand="block"
+          color="success"
+          (click)="model.status='approved'"
+          >Approve <ion-spinner *ngIf="loading" name="lines-small"></ion-spinner
+        ></ion-button>
+
+        <ion-button
+          *ngIf="canshow_forwardbutton"
+          type="submit"
+          expand="block"
+          color="success"
+          (click)="model.status='forward'"
+
+          >Forward
+          <ion-spinner
+            *ngIf="loading"
+            name="lines-small"
+          ></ion-spinner></ion-button
+      ></ion-col>
+
+      <ion-col size="4"
+        ><ion-button
+          type="submit"
+          expand="block"
+          color="danger"
+          (click)="model.status='rejected'"
+          >Reject
+          <ion-spinner
+            *ngIf="loading"
+            name="lines-small"
+          ></ion-spinner></ion-button
+      ></ion-col>
+    </ion-row>
+  </form>
+</ion-content>

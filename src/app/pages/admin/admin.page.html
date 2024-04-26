@@ -1,0 +1,49 @@
+<ion-header style="display: block;">
+
+  <ion-segment (ionChange)="segmentChanged($event)" [(ngModel)]="showpage">
+    <ion-segment-button value="users" *ngIf="authService.checkPermission('user_list')">
+      <ion-label>Users</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="roles" *ngIf="authService.checkPermission('role_list')">
+      <ion-label>Roles</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="tariffs" *ngIf="authService.checkPermission('tariff_list')">
+      <ion-label>Tariffs</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="regions" *ngIf="authService.checkPermission('region_list')">
+      <ion-label>Regions</ion-label>
+    </ion-segment-button>
+
+  </ion-segment>
+</ion-header>
+
+<ion-content>
+
+<div class="tab" [hidden]="showpage!='users'" *ngIf="authService.checkPermission('user_list')" >
+<app-user-list ></app-user-list>
+</div>
+
+
+<div class="tab" [hidden]="showpage!='roles'" *ngIf="authService.checkPermission('role_list')">
+  <app-role-list ></app-role-list>
+  </div>
+
+  <div class="tab" [hidden]="showpage!='tariffs'" *ngIf="authService.checkPermission('tariff_list')">
+    <app-tariff-list ></app-tariff-list>
+    </div>
+
+    <div class="tab" [hidden]="showpage!='regions'" *ngIf="authService.checkPermission('region_list')">
+      <app-region-list ></app-region-list>
+      </div>
+
+      <!-- <div *ngIf="showpage!='users' && showpage!='roles' && showpage!='tariffs' && showpage!='regions' ">
+       <div style="text-align: center;padding-top:20%">
+         <h1> <ion-icon style="font-size:50px;color:var(--ion-color-primary)" name="construct-outline"></ion-icon> </h1> <h3>You Dont Have Access Of Admin Module... </h3>
+      </div>
+      </div> -->
+
+
+
+</ion-content>

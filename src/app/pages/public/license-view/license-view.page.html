@@ -1,0 +1,198 @@
+<ion-header style="display: block;">
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title  >{{docspecs?.title}} #{{item?.idseq}}</ion-title>
+
+    <ion-buttons  slot="end">
+      <!-- <button *ngIf="docspecs?.title" class="ion-button"
+      [printTitle]="docspecs?.title+':'+docspecs?.title_no"
+      styleSheetFile="/assets/css/print.css"
+      printSectionId="print-section2"
+      ngxPrint>Print</button>  -->
+      <ion-button *ngIf="log_creditnotes.length==0" (click)="html2PDF(true)" color="primary">Download PDF</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content >
+  <div *ngIf="log_creditnotes.length > 0  ">
+    <p style="text-align: center;">You Could Not Download License . Credit Note has been generated </p>
+  </div>
+  <div class=parent_div *ngIf="log_creditnotes.length==0  ">
+    <div class="embeddiv" *ngIf="showembedpdf && false" style="width:794px;height:1124px" >
+      <embed style="height:1000px" [ngClass]="slightnoidea?'widthadjust1':'widthadjust2'" [src]='embedstring'/>
+    </div>
+    <div id="print-section2"  >
+
+    <div  >
+
+      <table >
+        <tr><td> <img src="assets/logos/mrss-logo.png" style="height:80px"/> </td> <td></td></tr>
+        <tr>
+
+          <td width=50%> Company Registration No. : 201824573H</td>
+          <td width=50% style="text-align: right;"><b>Licence No.  {{item?.items[cartitem_seq]?.tariff?.code}}-2022-{{item?.idseq}}-{{1+cartitem_seq}}
+            <!-- {{item?.items[cartitem_seq]?.tariff?.code}} -->
+          </b></td>
+        </tr>
+      </table>
+
+      <div style="text-align: center;padding:10px">
+          <div style="font-size:24px" class="boldtext"><i>CERTIFICATE</i></div><br>
+          <div style="font-size:16px" class="boldtext">LICENCE FOR THE<br>   {{item?.items[cartitem_seq]?.tariff?.type?.name}}</div>
+      </div>
+
+      <div style="background-image: url('assets/images/-rmrss-l-stamp.png');">
+      <div class="fieldname">
+        Name of Licensee
+      </div>
+
+      <div class="fieldvalue">
+        {{item?.items[cartitem_seq]?.licensee?.name}}
+      </div>
+
+      <div class="fieldname">
+        Address of Business
+      </div>
+
+      <div class="fieldvalue">
+        <span>{{item?.items[cartitem_seq]?.licensee?.address_1}}</span>
+        <span>&nbsp;{{item?.items[cartitem_seq]?.licensee?.address_2}}</span>
+        <span *ngIf="item?.items[cartitem_seq]?.licensee?.area">&nbsp;{{item?.items[cartitem_seq]?.licensee?.area}}</span>
+        <span>&nbsp;Singapore&nbsp;{{item?.items[cartitem_seq]?.licensee?.postalcode}}</span>
+      </div>
+
+      <table >
+        <tr>
+          <td width=70%>
+
+
+      <div class="fieldname">
+        Date Licence Issued
+      </div>
+
+      <div class="fieldvalue">
+        {{item?.items[cartitem_seq]?.start_date|date}}
+      </div>
+
+
+    </td>
+
+    <td width=30%>
+
+
+    <div class="fieldname">
+      Date of Expiry of License
+    </div>
+    <b>{{item?.items[cartitem_seq]?.end_date|date}}</b>
+    <div class="fieldvalue">
+
+    </div>
+
+
+
+  </td>
+
+</tr>
+<tr style="border-bottom:1px solid black">
+  <td>
+    <div class="fieldname">
+      Category Description
+    </div>
+
+    <div class="fieldvalue" style="border-bottom:0px">
+      {{item?.items[cartitem_seq]?.tariff?.code}} : {{item?.items[cartitem_seq]?.tariff?.name}}
+    </div>
+
+  </td>
+
+  <td>
+    <div class="fieldname">
+      Licence Tariff Fee
+    </div>
+    
+    <div class="fieldvalue" style="border-bottom:0px">
+      S$ {{item?.items[cartitem_seq]?.cart_total_without_discount?item?.items[cartitem_seq].cart_total_without_discount.toFixed(2):item?.items[cartitem_seq]?.cart_total_sub.toFixed(2) | number:'1.2-2':'en-US'}}
+      <!-- S$ {{item?.items[cartitem_seq]?.cart_total_sub.toFixed(2) | number:'1.2-2':'en-US'}} -->
+    </div>
+   
+  </td>
+  </tr>
+  </table>
+
+      <div class="fieldname">
+        Licensed Location
+      </div>
+
+      <div class="fieldvalue">
+        <span>{{item?.items[cartitem_seq]?.licensee?.operating_address_1}}</span>
+        <span>&nbsp;{{item?.items[cartitem_seq]?.licensee?.operating_address_2}}</span>
+        <!-- <span>{{item?.items[cartitem_seq]?.licensee?.area}}</span>,  -->
+        <span>&nbsp;Singapore&nbsp;{{item?.items[cartitem_seq]?.licensee?.operating_postalcode}}</span>
+      </div>
+      
+
+      <!-- <div class="smalltext boldtext">Licensee are advised to adhere to the existing Covid-19 regulations with the relevant authorities.</div>
+      <div class="smalltext ">Music Rights (Singapore) Public Limited hereby authorises the Licensee to perform or cause to be performaned publicly karaoke videos and laser discs subject to the terms and conditions stated in the License Application submitted by the Licensee. In the event that the Licensed term is less than one (1) calendar year (i.e. 3, 6, 9 Months) the License Fee payable shall be pro-rated according to the Licence Fee computed on a per annum basis, unless otherwise specified by the RIghts (Singapore) Public Limited</div> -->
+
+      <hr style="border-bottom:1px dotted black;margin-top:5px;margin-bottom:5px">
+      <div class="smalltext boldtext">Terms & Conditions</div>
+      <div class="smalltext ">
+        <div>
+          <!-- Lisensee shall not under any circumstances be entitled to any refund of any part of the Licence Fee, nor shall Licensee, upon the termination of this Agreement or the cessation of Licensee’s business or the relinquishment of this Licence, be entitled to transfer of the Licence to any third party, whether in whole or in part.
+        This licence will continue to be in force until its expiry, unless cancelled or suspended prior to its expiry.
+        This Licence does not permit the Licensee to edit, re-mix, re-record or alter any of the Music Recordings for any purpose whatsoever.
+       Licensee is advised to adhere to the existing Covid-19 regulations with the relevant authorities. -->
+       Licensee shall not under any circumstances be entitled to any refund of any part of the Licence Fee, nor shall Licensee, upon the termination of this Agreement or the cessation of Licensee’s business or the relinquishment of this Licence, be entitled to transfer of the Licence to any third party, whether in whole or in part.
+       This licence will continue to be in force until its expiry, unless cancelled or suspended prior to its expiry.
+       This Licence does not permit the Licensee to edit, re-mix, re-record or alter any of the Music Recordings for any purpose whatsoever.
+
+      </div>
+      </div>
+
+      <table style="margin-top:15px">
+        <tr>
+          <td>
+            <!-- QRCODe-->
+            <div style="height: 130px; width: 140px;">
+              <ngx-qrcode
+              [elementType]="elementType"
+              [value]="pageurl"
+              cssClass="qrclass" >
+
+            </ngx-qrcode>
+            </div>
+
+          <!-- //errorCorrectionLevel="L"> -->
+
+          </td>
+          <td style="text-align: right;">
+            <!-- STAMP-->
+             <img src="/assets/images/mrss-stamp.png" height="130px" width="140px">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span style="font-weight: bold;font-size:large">MUSIC RIGHTS (SINGAPORE) PUBLIC LIMITED</span> <br>
+            <span style="font-size:12px">4 Leng Kee Road #03-06/07 SIS Building Singapore 159088 T 6475 1181 F 6475 1310</span> <br>
+          </td>
+          <td style="font-weight: bold;text-align: right;">www.mrss.com.sg</td>
+        </tr>
+
+      </table>
+
+      </div>
+
+      <!-- <table style="margin-top:8px">
+        <tr> <td></td></tr>
+        <tr >  <td ></td> </tr>
+      </table> -->
+    </div>
+</div>
+</div>
+
+
+</ion-content>

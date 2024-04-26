@@ -1,0 +1,28 @@
+.cardcartnewbutton{
+  overflow: inherit;
+  justify-content: center;
+   display: flex;
+    padding:50px;
+    text-align: center;
+}
+#gst{
+  margin-top: 5px;
+
+}
+.inactiver{
+    text-decoration: line-through;
+    opacity:0.7;
+}
+
+.requestlistdiv{
+    margin-bottom:10px;
+}
+
+.sumcard{
+  max-width:700px;margin:0px auto;
+  margin-bottom:20px;
+  padding:10px;
+}
+div:hover {
+  cursor: pointer;
+}

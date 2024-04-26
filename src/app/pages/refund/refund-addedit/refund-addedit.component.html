@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot=start>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <span>Refund</span>
+    </ion-title>
+    <ion-buttons slot=end>
+       <ion-button (click)="dismiss()"><ion-icon name="close-outline"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form (ngSubmit)="formSubmit($event)"  ngNativeValidate>
+    <ion-row *ngIf="!model._id">
+      <ion-col size="12" size-sm="12" class="ng-select-col">
+        <ion-label class="mt-left">Credit Note List</ion-label>
+        <ng-select name=creditnote [(ngModel)]="model.creditnote" (change)="selectCredit(model.creditnote)">
+          <ng-container *ngFor="let item of refundCredit" >
+            <ng-option [value]="item._id">{{item?.creditno}}</ng-option>
+          </ng-container>
+        </ng-select>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="model._id">
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Credit Note No.</ion-label>
+          <ion-input name=creditno [(ngModel)]="model.creditno" disabled ></ion-input>
+        </ion-item>
+      </ion-col>
+     </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Refund Amount</ion-label>
+          <ion-input name=amount [(ngModel)]="model.amount" required placeholder="Enter Refund Amount" [disabled]="model._id"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Cheque No</ion-label>
+          <ion-input name=chequeno [(ngModel)]="model.chequeno" (change)="formValidate($event,'chequeno',model.name)" required placeholder="Enter Cheque No."></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Reason For Refund</ion-label>
+          <ion-input name=reason [(ngModel)]="model.reason" required placeholder="Enter Reason For Refund"></ion-input>
+        </ion-item>
+      </ion-col>
+     </ion-row>
+    <ion-row>
+      <ion-col size=6><ion-button (click)="dismiss()" color=light expand=block>Cancel</ion-button></ion-col>
+      <ion-col size=6><ion-button type=submit expand=block>Save  <ion-spinner *ngIf="loading" name="lines-small"></ion-spinner></ion-button></ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>

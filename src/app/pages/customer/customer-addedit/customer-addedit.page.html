@@ -1,0 +1,361 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot=start>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <span *ngIf="!model?._id">Add</span>
+      <span *ngIf="model?._id">Edit</span> Customer
+    </ion-title>
+    <ion-buttons slot=end>
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form (ngSubmit)="formSubmit($event)" ngNativeValidate>
+    <ion-row>
+      <ion-col size="12" size-sm="12" class="ng-select-col">
+        <ion-label>Customer Group</ion-label>
+        <!-- <ng-select
+           [items]="apiService.DBCache['CUSTOMER_LIST'] "
+           bindLabel="name" name=customer_group
+           [trackByFn]="apiService.NgSelecttrackByFn"
+           [(ngModel)]="model.customer_group">
+          </ng-select> -->
+
+        <app-customer-autocomplete *ngIf="!loading" [item]="model.customer_group"
+          (newItemEvent)="model.customer_group=$event;address($event)"></app-customer-autocomplete>
+
+      </ion-col>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Customer Name <span style="color: red;">*</span></ion-label>
+          <ion-input name=name [(ngModel)]="model.name" placeholder="Enter Name" required></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">First Name</ion-label>
+          <ion-input name=first_name [(ngModel)]="model.first_name" placeholder="Enter First Name"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Last Name </ion-label>
+          <ion-input name=last_name [(ngModel)]="model.last_name" placeholder="Enter Last Name"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Customer Email</ion-label>
+          <ion-input name=email [(ngModel)]="model.email" placeholder="Enter Email"
+            (change)="formValidate($event,'email',model.email)"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Customer Mobile No.</ion-label>
+          <ion-input name=mobile [(ngModel)]="model.mobile" placeholder="Enter Mobile No."
+            (change)="formValidate($event,'mobile',model.mobile)"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Additional Mobile No.</ion-label>
+          <ion-input name=mobile2 [(ngModel)]="model.mobile2" placeholder="Enter Mobile No."
+            (change)="formValidate($event,'mobile',model.mobile2)"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Brand</ion-label>
+          <ion-input name=brands [(ngModel)]="model.brands" placeholder="Enter Brand"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">UEN Number</ion-label>
+          <ion-input name=uen_no [(ngModel)]="model.uen_no" placeholder="Enter UEN Number"></ion-input>
+        </ion-item>
+      </ion-col>
+      <!-- <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label position="stacked">Category <Address></Address></ion-label>
+            <ion-input name=category [(ngModel)]="model.category"  placeholder="Enter Category"></ion-input>
+          </ion-item>
+        </ion-col> -->
+
+      <ion-col size="12" size-sm="6" class="ng-select-col">
+        <ion-label class="mt-left">Business Activities</ion-label>
+        <ng-select name=category [(ngModel)]="model.category" required>
+          <ng-container *ngFor="let item of apiService.DBCache['METADATA_CACHE_LIST']['dropdown_customer_category']">
+            <ng-option [value]="item.name">{{item?.name}}</ng-option>
+          </ng-container>
+        </ng-select>
+      </ion-col>
+
+
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Customer Code (old System)</ion-label>
+          <ion-input name=ucode [(ngModel)]="model.ucode" placeholder="Enter Customer Code"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="12" class="ng-select-col">
+
+        <ion-label>Select Licence Executive <span style="color: red;">*</span></ion-label>
+        <!-- <ng-select name=user [(ngModel)]="model.user" [trackByFn]="apiService.NgSelecttrackByFn">
+               <ng-container *ngFor="let item of apiService.DBCache['USER_LIST']">
+                 <ng-option [value]="item">{{item?.name}}</ng-option>
+               </ng-container>
+             </ng-select> -->
+
+        <!-- <ng-select
+        [items]="apiService.DBCache['USER_LIST'] "
+        bindLabel="name" name=executive
+        [trackByFn]="apiService.NgSelecttrackByFn"
+        [(ngModel)]="model.executive">
+
+          </ng-select> -->
+
+        <app-user-autocomplete *ngIf="!loading" [item]="model.executive" (newItemEvent)="model.executive=$event">
+        </app-user-autocomplete>
+
+      </ion-col>
+
+      <!-- <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Star</ion-label>
+          <ion-input name=star [(ngModel)]="model.star"  placeholder="Enter Star"></ion-input>
+        </ion-item>
+        </ion-col>
+          <ion-col size="12" size-sm="6">
+            <ion-item>
+              <ion-label position="stacked">Code</ion-label>
+              <ion-input name=code [(ngModel)]="model.code" required placeholder="Enter Code"></ion-input>
+            </ion-item>
+        </ion-col> -->
+      <!-- <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label position="stacked">PIC</ion-label>
+            <ion-input name=pic [(ngModel)]="model.code" required placeholder="Enter PIC"></ion-input>
+          </ion-item>
+      </ion-col> -->
+
+    </ion-row>
+    <hr>
+    <ion-row>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Office Address line 1 <span style="color: red;">*</span></ion-label>
+          <ion-input type="text" name=address_1 [(ngModel)]="model.address_1" required
+            placeholder="Enter Address Line 1"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Office Address line 2</ion-label>
+          <ion-input type="text" name=address_2 [(ngModel)]="model.address_2" placeholder="Enter Address Line 2">
+          </ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <!-- <ion-col size="12" size-sm="6">
+          <ion-label class="mt-left ">Payment Frequency</ion-label>
+          <ng-select name=payment_frequency
+          [items]="[{name:'Yearly',value:0},{name:'Half yearly',value:1},{name:'Quarterly',value:2}]"
+          bindLabel="name" bindValue="value" placeholder="payement frequency"
+          [(ngModel)]="model.payment_frequency">
+        </ng-select>
+        </ion-col> -->
+      <!-- <ion-col size="12" size-sm="12">
+           <ion-item>
+            <ion-label position="stacked">Office Area</ion-label>
+            <ion-input name=area [(ngModel)]="model.area"  placeholder="Enter Area"></ion-input>
+           </ion-item>
+          </ion-col> -->
+      <ion-col size="6" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Office Postal Code <span style="color: red;">*</span></ion-label>
+          <ion-input name=postalcode [(ngModel)]="model.postalcode" type="text" required placeholder="Enter Postal Code"
+            required (change)="formValidate($event,'postal-code',model.postalcode)"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Office District Code<span style="color: red;">*</span></ion-label>
+          <ion-input name=district type="text" [(ngModel)]="model.district" required placeholder="Enter District"
+            required (change)="formValidate($event,'number',model.district)"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <hr>
+    <ion-row *ngIf="!model._id">
+      <ion-col size=6>
+        <ion-label style="margin-left: 13px;">Same As Above</ion-label>&nbsp;&nbsp;
+        <div style="display: inline-block;">
+          <ion-checkbox expand=block (ionChange)="changeAddress(model,$event)"></ion-checkbox>
+        </div>
+      </ion-col>
+      <ion-col size="6"></ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Operating Address line 1</ion-label>
+          <ion-input name=operating_address_1 [(ngModel)]="model.operating_address_1"
+            placeholder="Enter Address Line 1"></ion-input>
+        </ion-item>
+
+      </ion-col>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Operating Address line 2</ion-label>
+          <ion-input name=operating_address_2 [(ngModel)]="model.operating_address_2"
+            placeholder="Enter Address Line 2"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <!-- <ion-col size="12" size-sm="12">
+          <ion-item>
+            <ion-label position="stacked">Operating Area</ion-label>
+            <ion-input name=area [(ngModel)]="model.area"  placeholder="Enter Area"></ion-input>
+          </ion-item>
+        </ion-col> -->
+      <ion-col size="6" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Operating Postal Code</ion-label>
+          <ion-input name=operating_postalcode [(ngModel)]="model.operating_postalcode" type="text"
+            placeholder="Enter Postal Code" (change)="formValidate($event,'postal-code',model.postalcode)"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="6" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Operating District Code</ion-label>
+          <ion-input name=operating_distric type="text" [(ngModel)]="model.operating_distric"
+            placeholder="Enter District" (change)="formValidate($event,'number',model.district)"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <hr>
+    <ion-row>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Number of Outlets</ion-label>
+          <ion-input type="number" name=no_of_outlets [(ngModel)]="model.no_of_outlets"
+            placeholder="Enter Number of Outlets" (change)="formValidate($event,'number',model.no_of_outlets)">
+          </ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Supplier</ion-label>
+          <ion-input type="text" name=supplier [(ngModel)]="model.supplier" placeholder="Enter Supplier"></ion-input>
+        </ion-item>
+      </ion-col>
+
+
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Remark</ion-label>
+          <ion-textarea name=remark [(ngModel)]="model.remark" placeholder="Enter Remark"></ion-textarea>
+        </ion-item>
+      </ion-col>
+
+      <!-- <ion-col size="12" size-sm="6">
+          <ion-label class="mt-left ">Status</ion-label>
+          <ng-select name=status
+          [items]="[{name:'Ceased',value:0},{name:'To be Ceased',value:1},{name:'Reno',value:2},{name:'Pending',value:3},{name:'Legal',value:4},{name:'Playing Royalty Free Music',value:5},{name:'Pro-rated',value:6}]"
+          bindLabel="name" bindValue="name" placeholder="Status"
+          [(ngModel)]="model.status" style="margin-top: 18px;">
+        </ng-select>
+        </ion-col> -->
+
+      <ion-col size="12" size-sm="6" class="ng-select-col">
+        <ion-label class="mt-left">Status</ion-label>
+        <ng-select name=status [(ngModel)]="model.status" required>
+          <ng-container *ngFor="let item of apiService.DBCache['METADATA_CACHE_LIST']['dropdown_customer_status']">
+            <ng-option [value]="item.name">{{item?.name}}</ng-option>
+          </ng-container>
+        </ng-select>
+      </ion-col>
+
+      <ion-col >
+        <ion-item>
+          <ion-label position="stacked">Customer Documents <br>(Application Form, ACRA, PE Licence)</ion-label>
+
+          <input style="display: none" type="file" name=uploadfile class=" btn btn-sm btn-danger btn-simple"
+          (change)="handleFileInput($event)" #Input /><br>
+        <ion-button (click)="Input.click()" color="primary">Upload File</ion-button>
+        <small>*Save changes to save files</small>
+
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="12">
+        <ion-item *ngFor="let d of model.documents; let i=index">
+          <ion-label>{{d.filename}}</ion-label>
+          
+            <a [href]="this.apiService.apiUrl +'/'+ d.path" target="_blank" download style="margin: 0 10px;"><ion-icon size="small" color="primary" name="cloud-download"></ion-icon></a>
+            <span (click)="presentCartDeleteConfirm(i)" target="_blank" style="margin: 0 10px;cursor: pointer;"><ion-icon size="small" color="primary" name="trash"></ion-icon></span>
+            <!-- <a [href]="this.apiService.apiUrl +'/'+ d.path" target="_blank" download><ion-icon name="trash"></ion-icon></a> -->
+
+          <!-- <pdf-viewer [src]="this.apiService.apiUrl +'/'+ model.digital_signature_url" [render-text]="false" style="display: block;width: 100px; height: 50px"></pdf-viewer> -->
+          <!-- <img [src]="this.apiService.apiUrl +'/'+ model.digital_signature_url" alt="" width="130" height="80" /> -->
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <hr>
+    <ion-row>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Contact Name</ion-label>
+          <ion-input type=text name=contact_name placeholder="Enter Name" [(ngModel)]="model.contact_name"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Contact Mobile</ion-label>
+          <ion-input type=text name=contact_mobile placeholder="Enter Mobile Number" [(ngModel)]="model.contact_mobile"
+            (change)="formValidate($event,'contact',model.contact_mobile)"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Contact Email</ion-label>
+          <ion-input type=email name=contact_email placeholder="Enter Email" [(ngModel)]="model.contact_email"
+            (change)="formValidate($event,'email',model.email)"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+
+    <hr>
+    <ion-row>
+      <ion-col size=6>
+        <ion-button (click)="dismiss()" color=light expand=block>Cancel</ion-button>
+      </ion-col>
+      <ion-col size=6>
+        <ion-button type=submit expand=block>Save <ion-spinner *ngIf="loading" name="lines-small"></ion-spinner>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>

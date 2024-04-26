@@ -1,0 +1,350 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Dashboard</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-2>
+        <ion-card class="welcome-card" style="background-color: #f9fafb;">
+          <ion-card-header>
+            <ion-card-subtitle>Sales</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <span>0</span>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col col-2>
+        <ion-card class="welcome-card" style="background-color: #f0f2f4;">
+          <ion-card-header>
+            <ion-card-subtitle>Sales Target</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <span>0</span>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col col-2>
+        <ion-card class="welcome-card" style="background-color: #f9fafb;">
+          <ion-card-header>
+            <ion-card-subtitle>Target Achievement</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <span>0</span>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col col-2>
+        <ion-card class="welcome-card" style="background-color: #f0f2f4;">
+          <ion-card-header>
+            <ion-card-subtitle>Gross Profit</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <span>0</span>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col col-2>
+        <ion-card class="welcome-card" style="background-color: #f9fafb;">
+          <ion-card-header>
+            <ion-card-subtitle>Gross Profit Margin</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <span>0%</span>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col col-2>
+        <ion-card class="welcome-card" style="background-color: #f0f2f4;">
+          <ion-card-header>
+            <ion-card-subtitle>Sales Last Year</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <span>0</span>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-card class="welcome-card" style="background-color: #f9fafb;">
+          <ion-card-header>
+            <ion-card-subtitle>Pending PI by LO</ion-card-subtitle>
+            <ion-row>
+              <ion-col size="3">
+                <ng-select name="pending_pi_by_lo_yr" placeholder="year" [(ngModel)]="params.pending_pi_by_lo_yr"
+                  (ngModelChange)="getList()">
+                  <ng-container *ngFor="let x of years">
+                    <ng-option [value]="x">{{x}}</ng-option>
+                  </ng-container>
+                </ng-select>
+              </ion-col>
+
+              <ion-col size="3">
+                <ng-select name="pending_pi_by_lo_month" placeholder="month" [(ngModel)]="params.pending_pi_by_lo_month"
+                  (ngModelChange)="getList()">
+                  <ng-container *ngFor="let x of months">
+                    <ng-option [value]="x">{{x}}</ng-option>
+                  </ng-container>
+                </ng-select>
+              </ion-col>
+            </ion-row>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #barChart></canvas>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-card class="welcome-card" style="background-color: #f9fafb;">
+          <ion-card-header>
+            <ion-card-subtitle>Pending ATI by LO</ion-card-subtitle>
+            <ion-row>
+              <ion-col size="3">
+                <ng-select name="pending_ati_by_lo_yr" placeholder="year" [(ngModel)]="params.pending_ati_by_lo_yr"
+                  (ngModelChange)="getList()">
+                  <ng-container *ngFor="let x of years">
+                    <ng-option [value]="x">{{x}}</ng-option>
+                  </ng-container>
+                </ng-select>
+              </ion-col>
+
+              <ion-col size="3">
+                <ng-select name="pending_ati_by_lo_month" placeholder="month"
+                  [(ngModel)]="params.pending_ati_by_lo_month" (ngModelChange)="getList()">
+                  <ng-container *ngFor="let x of months">
+                    <ng-option [value]="x">{{x}}</ng-option>
+                  </ng-container>
+                </ng-select>
+              </ion-col>
+            </ion-row>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #bar2Chart></canvas>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+
+    </ion-row>
+    <ion-row>
+
+      <!-- <ion-col col-6 col-sm-12  >
+        <ion-card class="welcome-card" >
+          <ion-card-header>
+            <ion-card-subtitle> Licence Expiring Within 30, 60, 90 Days</ion-card-subtitle>
+            <ion-card-title> </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #bar7Chart></canvas>
+          </ion-card-content>
+        </ion-card>
+       </ion-col> -->
+
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-4>
+        <ion-card class="welcome-card" style="background-color: #f9fafb;">
+          <ion-card-header>
+            <ion-card-subtitle>Receivable Days Outstanding for PI</ion-card-subtitle>
+
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #bar6Chart></canvas>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col col-4>
+        <ion-card class="welcome-card">
+          <ion-card-header>
+            <ion-card-subtitle>Receivable Days Outstanding for ATI </ion-card-subtitle>
+
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #bar4Chart></canvas>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <!-- <ion-col col-md-4>
+        <ion-card class="welcome-card">
+          <ion-card-header>
+            <ion-card-subtitle>Sales Amount By Region</ion-card-subtitle>
+            <ion-card-title> </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #bar3Chart></canvas>
+          </ion-card-content>
+        </ion-card>
+      </ion-col> -->
+      <!-- <ion-col col-4 col-md-4 col-sm-4  >
+        <ion-card class="welcome-card" >
+          <ion-card-header>
+            <ion-card-subtitle> Licence Expiring Within 30, 60, 90 Days with the no. of PI</ion-card-subtitle>
+            <ion-card-title> </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #bar7Chart></canvas>
+          </ion-card-content>
+        </ion-card>
+       </ion-col> -->
+      <!-- <ion-col col-md-4>
+        <ion-card class="welcome-card">
+          <ion-card-header>
+            <ion-card-subtitle>Inventory Days Outstanding</ion-card-subtitle>
+            <ion-card-title> </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #bar5Chart></canvas>
+          </ion-card-content>
+        </ion-card>
+       </ion-col> -->
+    </ion-row>
+    <ion-row>
+      <ion-col size-xs="12" size-md="6">
+        <ion-card class="welcome-card" style="height: 100%; background-color: #f9fafb;">
+
+          <ion-card-header>
+            <ion-card-subtitle>Collection Report By LO</ion-card-subtitle>
+            <ion-row>
+              <ion-col size="3">
+                <ng-select name="collection_by_lo_yr" placeholder="year" [(ngModel)]="params.collection_by_lo_yr"
+                  (ngModelChange)="getList()">
+                  <ng-container *ngFor="let x of years">
+                    <ng-option [value]="x">{{x}}</ng-option>
+                  </ng-container>
+                </ng-select>
+              </ion-col>
+              <ion-col size="3">
+                <ng-select name="collection_by_lo_month" placeholder="month" [(ngModel)]="params.collection_by_lo_month"
+                  (ngModelChange)="getList()">
+                  <ng-container *ngFor="let x of months">
+                    <ng-option [value]="x">{{x}}</ng-option>
+                  </ng-container>
+                </ng-select>
+              </ion-col>
+            </ion-row>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #monthly_colection_by_lo></canvas>
+          </ion-card-content>
+
+        </ion-card>
+      </ion-col>
+      <ion-col size-xs="12" size-md="6">
+        <ion-card class="welcome-card" style="height: 100%; background-color: #f9fafb;">
+
+
+          <ion-card-header>
+            <ion-card-subtitle>Collection Report By Rights</ion-card-subtitle>
+            <ion-row>
+              <ion-col size="3">
+                <ng-select name="collection_by_right_yr" placeholder="year" [(ngModel)]="params.collection_by_right_yr"
+                  (ngModelChange)="getList()">
+                  <ng-container *ngFor="let x of years">
+                    <ng-option [value]="x">{{x}}</ng-option>
+                  </ng-container>
+                </ng-select>
+              </ion-col>
+              <ion-col size="3">
+                <ng-select name="collection_by_right_month" placeholder="month"
+                  [(ngModel)]="params.collection_by_right_month" (ngModelChange)="getList()">
+                  <ng-container *ngFor="let x of months">
+                    <ng-option [value]="x">{{x}}</ng-option>
+                  </ng-container>
+                </ng-select>
+              </ion-col>
+            </ion-row>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #monthly_colection_by_rights></canvas>
+          </ion-card-content>
+
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row>
+
+
+      <ion-col col-12>
+        <ion-row>
+          <ion-col col-12>
+
+          </ion-col>
+          <!-- <ion-card class="welcome-card" style="background-color: #f9fafb;">
+            <ion-card-header>
+              <ion-card-subtitle>Collection Report By LO</ion-card-subtitle>
+              <ng-select name=lo [(ngModel)]="model.lo" (ngModelChange)="getCollectionbylo()" >
+                <ng-container *ngFor="let item of model.userdata">
+                  <ng-option [value]="item.name">{{item?.name}}</ng-option>
+                </ng-container>
+              </ng-select>
+            </ion-card-header>
+            <ion-card-content>
+              <canvas #monthly_colection_by_lo></canvas>
+            </ion-card-content>
+          </ion-card> -->
+
+        </ion-row>
+        <ion-row>
+          <ion-col size-md="8">
+
+
+            <ion-card class="welcome-card" style="height: 100%; background-color: #f9fafb;">
+
+              <ion-card-header>
+                <ion-card-subtitle> Licence Expiring Within 30, 60, 90 Days</ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <canvas #bar7Chart></canvas>
+              </ion-card-content>
+            </ion-card>
+            <!-- <ion-card class="welcome-card" style="background-color: #f9fafb;">
+              <ion-card-header>
+                <ion-card-subtitle>Collection Report By LO</ion-card-subtitle>
+                <ng-select name=lo [(ngModel)]="model.lo" (ngModelChange)="getCollectionbylo()" >
+                  <ng-container *ngFor="let item of model.userdata">
+                    <ng-option [value]="item.name">{{item?.name}}</ng-option>
+                  </ng-container>
+                </ng-select>
+              </ion-card-header>
+              <ion-card-content>
+                <canvas #monthly_colection_by_lo></canvas>
+              </ion-card-content>
+            </ion-card> -->
+          </ion-col>
+        </ion-row>
+      </ion-col>
+
+      <ion-col col-12>
+
+      </ion-col>
+
+    </ion-row>
+    <!-- <ion-row>
+      <ion-col col-6 col-sm-12  >
+        <ion-card class="welcome-card" >
+          <ion-card-header>
+            <ion-card-subtitle> Licence Expiring Within 30, 60, 90 Days</ion-card-subtitle>
+            <ion-card-title> </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <canvas #bar7Chart></canvas>
+          </ion-card-content>
+        </ion-card>
+       </ion-col>
+    </ion-row> -->
+  </ion-grid>
+
+</ion-content>

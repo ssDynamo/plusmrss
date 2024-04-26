@@ -1,0 +1,74 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot=start>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <span *ngIf="!model?._id">Add</span>
+      <span *ngIf="model?._id">Edit</span> Transaction
+    </ion-title>
+    <ion-buttons slot=end>
+       <ion-button (click)="dismiss()"><ion-icon name="close-outline"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form (ngSubmit)="formSubmit($event)"  ngNativeValidate>
+    <ion-row>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Amount</ion-label>
+          <ion-input name=amount  step="0.01" [(ngModel)]="model.amount" required placeholder="Enter Amount" type=number></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="12" >
+
+
+    <ion-item>
+      <ion-label>Payment Method</ion-label>
+      <ion-select required  name=payment_method [(ngModel)]="model.payment_method" okText="Okay" cancelText="Dismiss" required>
+        <ion-select-option value="CHQ">CHEQUE</ion-select-option>
+        <ion-select-option value="ONLINE">ONLINE</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+
+       </ion-col>
+
+       <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Customer Transaction Reference No.</ion-label>
+          <ion-input required name=customer_reference  [(ngModel)]="model.customer_reference" required placeholder="Enter Customer Reference No." ></ion-input>
+        </ion-item>
+      </ion-col>
+
+
+    </ion-row>
+
+    <hr>
+    <ion-row>
+      <!-- <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Suppliers</ion-label>
+          <ion-input name=supplier [(ngModel)]="model.supplier"  placeholder="Enter Suppliers"></ion-input>
+        </ion-item>
+      </ion-col> -->
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Remark</ion-label>
+          <ion-textarea name=remark [(ngModel)]="model.remark"  placeholder="Enter Remark"></ion-textarea>
+        </ion-item>
+      </ion-col>
+
+
+    </ion-row>
+     <hr>
+    <ion-row>
+      <ion-col size=6><ion-button (click)="dismiss()" color=light expand=block>Cancel</ion-button></ion-col>
+      <ion-col size=6><ion-button type=submit expand=block>Save  <ion-spinner *ngIf="loading" name="lines-small"></ion-spinner></ion-button></ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>

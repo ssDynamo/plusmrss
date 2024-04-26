@@ -1,0 +1,10 @@
+:host ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  background-color: rgb(248, 239, 245) !important;
+}
+
+:host ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option{
+  background-color: rgb(239, 248, 248) !important;
+  margin: 4px;
+
+
+}

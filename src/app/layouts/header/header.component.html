@@ -1,0 +1,31 @@
+<ion-header     style="background-color: #fff; " ><!---->
+  <ion-progress-bar style="position: absolute;width:100%;top:0px;z-index:10000" *ngIf="helperService?.globalloading"  type="indeterminate"></ion-progress-bar>
+
+  <ion-toolbar>
+    <ion-buttons slot="start" >
+      <ion-button (click)="helperService.toggleMenu()">
+        <ion-icon name="menu" slot="icon-only"> </ion-icon>
+      </ion-button>
+    </ion-buttons>
+  <ion-row   >
+    <ion-col size=6 class="flexcentercenter" [routerLink]="['/']" routerLinkActive="router-link-active"   (click)="isPopoverOpen=!isPopoverOpen">
+    <img _ngcontent-emv-c133="" src="/assets/logos/mrss-logo.png" class="cursor" style="border-right: 1px solid #888; padding-right: 7px;">
+    <!----><img _ngcontent-emv-c133="" class="cursor" style="padding-left: 7px;" src="/assets/logos/plus-logo.png">
+  </ion-col>
+  <!-- <ion-col size="4" *ngIf="helperService.isDevInstance()" class="ion-text-end" style="margin: auto;">
+    <span  style="width: 70px;height: 60px;padding: 20px;background-color:yellow;color: black;font-weight: bold;">Staging Instance</span>
+  </ion-col> -->
+  <ion-col size=6 class="ion-text-end">
+    <span *ngIf="helperService.isDevInstance()" class="stag" style="margin-right: 10px;"><b class="dblUnderlined">Staging Instance</b></span>
+    <div class="flexcentercenter useractions">
+   <span [title]="currentUser?.email"><b>{{currentUser?.name}} - {{currentUser?.role?.name}}</b> </span>
+   <ion-button color=light title="Change Password" (click)="presentChangePassword()"><ion-icon name="key-outline"></ion-icon></ion-button> &nbsp;
+   <ion-button color=light title="Logout" (click)="presentLogoutConfirm()"><ion-icon name="log-out-outline"></ion-icon></ion-button>
+  </div>
+  </ion-col>
+  </ion-row>
+
+
+    </ion-toolbar>
+    </ion-header>
+

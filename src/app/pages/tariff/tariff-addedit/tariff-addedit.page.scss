@@ -1,0 +1,22 @@
+form {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.ace_editor.ace-jsoneditor {
+  min-height: 550px;
+}
+
+:host ::ng-deep json-editor,
+:host ::ng-deep json-editor .jsoneditor,
+:host ::ng-deep json-editor > div,
+:host ::ng-deep json-editor jsoneditor-outer {
+  height: 550px;
+}
+
+ion-toggle {
+  --background: #7c7878;
+  --background-checked: #9e9c9b;
+  --handle-background: #ea2e2e;
+  --handle-background-checked: #2ebb33;
+}

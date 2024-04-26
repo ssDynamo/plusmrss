@@ -1,0 +1,114 @@
+<ion-header style="display: block;">
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Report</ion-title>
+
+  </ion-toolbar>
+
+</ion-header>
+<!--
+<ion-content>
+  <div style="text-align: center;padding-top:20%">
+    <h1> <ion-icon style="font-size:50px;color:var(--ion-color-primary)" name="construct-outline"></ion-icon> </h1> <h3>Module Under Construction... </h3>
+    </div>
+</ion-content> -->
+
+<ion-content>
+
+  <form (ngSubmit)="formSubmit()"  ngNativeValidate>
+
+
+    <ion-row>
+      <ion-col size="12" size-sm="3">
+        <ion-label class="mt-left">Select Report</ion-label>
+        <ng-select name=alias [(ngModel)]="model.alias" (change)="selectReport(model.alias)" >
+          <ng-container *ngFor="let item of report">
+            <ng-option [value]="item.alias">{{item?.name}}</ng-option>
+          </ng-container>
+        </ng-select>
+      </ion-col>
+
+      <ion-col size="12" size-sm="3" *ngIf="showStartEndDate == true">
+        <ion-label style="display: block;">Start date </ion-label>
+        <input placeholder="Select Start Date" class="textbox-n" type="date" name=start_date max="2099-12-31" [(ngModel)]="model.start_date"  id="date" style="width: 300px;" required>
+
+      </ion-col>
+
+      <ion-col size="12" size-sm="3" *ngIf="showStartEndDate == true">
+         <ion-label style="display: block;">End date </ion-label>
+         <input placeholder="Select End Date" class="textbox-n" type="date" name=end_date min="2018-01-01" max="2099-12-31" [(ngModel)]="model.end_date" id="date" style="width: 300px;" required>
+      </ion-col>
+
+      <ion-col size="12" size-sm="3" *ngIf="model.alias ==='pi_aging_report'">
+        <ion-label style="display: block;">PI End date </ion-label>
+        <input placeholder="Select End Date" class="textbox-n" type="date" name=end_date min="2018-01-01"  [(ngModel)]="model.end_date" id="date" style="width: 300px;" required>
+     </ion-col>
+
+    </ion-row>
+    <ion-row>
+      <ion-col size=3  *ngIf="showDate == false">
+        <ion-label class="mt-left">Select By Region</ion-label>
+        <ng-select name=ati_approver [(ngModel)]="filtermodel.l"  (ionChange)="filter()" >
+          <ng-container *ngFor="let item of  apiService.DBCache['REGION_LIST']">
+            <ng-option [value]="item._id">{{item?.name}}</ng-option>
+          </ng-container>
+        </ng-select>
+       </ion-col>
+        <ion-col size=3 *ngIf="showUser == true">
+        <ion-label class="mt-left">Select By User</ion-label>
+        <ng-select name=user [(ngModel)]="model.searchquser"  >
+          <ng-container *ngFor="let item of  apiService.DBCache['USER_LIST']">
+            <ng-option [value]="item._id">{{item?.name}}</ng-option>
+          </ng-container>
+        </ng-select>
+       </ion-col>
+       <ion-col size=3 *ngIf="showFilter == true">
+        <ion-label class="mt-left">Select Status</ion-label>
+        <ng-select   name="status" [items]="['All','Pending','Paid','Draft','Cancelled']" placeholder="Select Status"
+             [(ngModel)]="model.searchqstatus"   (clear)="model.status='All'">
+              </ng-select>
+       </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size=3 *ngIf="showDate == false">
+        <ion-label class="mt-left">Select Tariff Category</ion-label>
+        <ng-select name=ati_approver [(ngModel)]="filtermodel.l"  (ionChange)="filter()" >
+          <ng-container *ngFor="let item of  apiService.DBCache['TARIFF_LIST']">
+            <ng-option [value]="item._id">{{item?.name}}</ng-option>
+          </ng-container>
+        </ng-select>
+       </ion-col>
+
+    </ion-row>
+
+    <ion-row *ngIf="showCollectionReport == true">
+      <ion-col size="12" size-sm="3">
+        <ion-label class="mt-left">Filter Collection Report By</ion-label>
+        <ng-select name=reportby [(ngModel)]="model.reportby" >
+            <ng-option value="lo">Licensing Officer</ng-option>
+            <ng-option value="rights">Rights</ng-option>
+        </ng-select>
+      </ion-col>
+      <ion-col size="12" size-sm="3" *ngIf="showCollectionReport == true" >
+        <ion-label class="mt-left">Select Year</ion-label>
+        <ng-select name=year [(ngModel)]="model.year">
+          <ng-container *ngFor="let item of years">
+            <ng-option [value]="item">{{item}}</ng-option>
+          </ng-container>
+        </ng-select>
+
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+
+      <ion-col size="12" size-sm="3">
+        <ion-button type=submit expand=block *ngIf="authService.checkPermission('report_download') && !is_generating">Generate Report <ion-spinner *ngIf="loading" name="lines-small"></ion-spinner></ion-button>
+        <ion-button *ngIf="is_generating" [disabled]="true">Generating <ion-spinner></ion-spinner></ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>

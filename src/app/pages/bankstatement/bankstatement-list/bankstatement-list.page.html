@@ -1,0 +1,96 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Bank Statement</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item *ngIf="authService.checkPermission('bankstatement_add')">
+
+      <ion-label position="stacked">Upload Bank Statement</ion-label><br>
+    <!-- <ion-input type=file name=uploadfile (change)="handleFileInput($event)"></ion-input> -->
+     <input style="display: none" type="file" class=" btn btn-sm btn-danger btn-simple" (change)="handleFileInput($event)" #imgInput>
+    <input type="button" (click)="imgInput.click()" class=" btn btn-sm btn-danger btn-simple" value="Upload Bank Statement">
+    <span  *ngIf="this.validStatement == true">{{fileName}}</span>
+  </ion-item>
+
+
+
+  <ion-row class="nopaddingrow searchfilterrow">
+    <ion-col size=7> </ion-col>
+    <ion-col size=5 class="">
+      <div class="flexcentercenter">
+      <ion-searchbar placeholder="Customer Ref. No"[(ngModel)]="filtermodel.q" (ionChange)="filter()"></ion-searchbar>
+
+    </div>
+    </ion-col>
+
+  </ion-row>
+  <ngx-datatable
+  class="material"
+  [columnMode]="'force'"
+    [externalPaging]="true"
+    [count]="pagination.count"
+    [offset]="pagination.offset"
+    [limit]="pagination.limit"
+    [rows]="items"
+    (page)="pageCallback($event)"
+    [scrollbarH]="true"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+  >
+
+  <ngx-datatable-column name="Details"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      TRN Type : <b>{{row?.trn_type}}</b> <br>
+      Cust Ref : <b> {{row?.customer_reference}} </b><br>
+      Bank Ref : {{row?.bank_reference}}
+    </ng-template>
+  </ngx-datatable-column>
+
+
+  <ngx-datatable-column name="Narrative" >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+
+      By {{row?.narrative}}<br>
+    </ng-template>
+  </ngx-datatable-column>
+
+
+
+  <ngx-datatable-column name="Amount"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <ion-chip *ngIf="row.recodone==true" color="success">
+        <ion-label>Reco Done</ion-label>
+      </ion-chip><br>
+      <b>S$ {{row?.amount_credit | number:'1.2-2':'en-US'}} </b>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Info"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+     Post Date :  {{row?.post_date|date}}<br>
+     Value Date :  {{row?.value_date|date}}<br>
+     Uploaded At : {{row?.createdAt|date}}<br>
+     Uploaded By : {{row?.createdBy?.name}}
+    </ng-template>
+  </ngx-datatable-column>
+
+
+
+
+
+
+  <!-- <ngx-datatable-column name="Actions" [width]="30" [frozenRight]="true">
+    <ng-template let-row="row"  ngx-datatable-cell-template >
+    <div class="tableactions">
+      <span (click)="presentAddeditModal(row)"> <ion-icon name="create-outline"></ion-icon> </span>
+    </div>
+    </ng-template>
+  </ngx-datatable-column> -->
+
+  </ngx-datatable>
+
+</ion-content>

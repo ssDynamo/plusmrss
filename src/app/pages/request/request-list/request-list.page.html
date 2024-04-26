@@ -1,0 +1,135 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Requests</ion-title>
+    <ion-buttons color=primary slot=end >
+      <ion-button color="primary" (click)="presentAddeditModal({})">+ Add</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+
+
+  <ion-row class="searchfilterrow">
+    <ion-col size=2>
+      <ion-label class="mt-left">Select By From User</ion-label>
+      <ng-select name=ati_approver [(ngModel)]="filtermodel.searchqfromuser"  (change)="filter()" >
+        <ng-container *ngFor="let item of apiService.DBCache['USER_LIST']">
+          <ng-option [value]="item._id">{{item?.name}}</ng-option>
+        </ng-container>
+      </ng-select>
+   </ion-col>
+   <ion-col size=2>
+    <ion-label class="mt-left">Select By To User</ion-label>
+    <ng-select name=ati_approver [(ngModel)]="filtermodel.searchqtouser"  (change)="filter()" >
+      <ng-container *ngFor="let item of apiService.DBCache['USER_LIST']">
+        <ng-option [value]="item._id">{{item?.name}}</ng-option>
+      </ng-container>
+    </ng-select>
+ </ion-col>
+
+ <ion-col size=2>
+  <ion-label class="mt-left">Select Status</ion-label>
+  <ng-select name=ati_approver [(ngModel)]="filtermodel.searchqstatus"  (change)="filter()" >
+    <!-- <ng-container *ngFor="let item of apiService.DBCache['USER_LIST']"> -->
+      <ng-option value="all">All</ng-option>
+      <ng-option value="pending">Pending</ng-option>
+      <ng-option value="forward">Forward</ng-option>
+      <ng-option value="approved">Approved</ng-option>
+      <ng-option value="rejected">Rejected</ng-option>
+    <!-- </ng-container> -->
+  </ng-select>
+</ion-col>
+
+ <ion-col size=3>
+  <ion-label class="mt-left">Select By Type</ion-label>
+  <ng-select name=ati_approver [(ngModel)]="filtermodel.searchqtype"  (change)="filter()" >
+    <ng-container *ngFor="let item of apiService.DBCache['METADATA_CACHE_LIST']?.['request_type']">
+      <ng-option [value]="item.alias">{{item?.name}}</ng-option>
+    </ng-container>
+  </ng-select>
+</ion-col>
+
+   <ion-col size=3 class="">
+      <div class="flexcentercenter">
+      <ion-searchbar placeholder="Customer / PI-No"[(ngModel)]="filtermodel.q" (ionChange)="filter()"></ion-searchbar>
+    </div>
+  </ion-col>
+
+  </ion-row>
+  <ngx-datatable
+  class="material"
+  [columnMode]="'force'"
+    [externalPaging]="true"
+    [count]="pagination.count"
+    [offset]="pagination.offset"
+    [limit]="pagination.limit"
+    [rows]="items"
+    (page)="pageCallback($event)"
+    [scrollbarH]="true"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+  >
+
+  <ngx-datatable-column name="For" >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+     <a [routerLink]="['/quotation/addedit']" [queryParams]="{_id:row.quotation?._id}" routerLinkActive="router-link-active"   > Quotation: #{{row?.quotation?.idseq}}<br>{{row?.quotation?.pi_no}}</a><br>
+      For <b>{{row?.quotation?.customer?.name}}</b><br>
+      By {{row?.quotation?.user?.name}}<br>
+      <a [href]="'/public/quotationtaxinvoice-view?view=proformainvoice&_id='+row?.quotation?._id"  target=_blank routerLinkActive="router-link-active" > View Proforma Invoice</a>
+    </ng-template>
+  </ngx-datatable-column>
+
+
+
+  <ngx-datatable-column name="From"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      {{row?.fromUser?.name}}<br>
+      Role: {{row?.fromUser?.role?.name}}
+    </ng-template>
+  </ngx-datatable-column>
+
+
+  <ngx-datatable-column name="To"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      {{row?.toUser?.name}}<br>
+      Role: {{row?.toUser?.role?.name}}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Status"  >
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <ion-chip [color]="row?.status=='success' || row?.status=='approved' ? 'success':row?.status=='rejected' ?'danger':'secondary'">
+        <ion-label>{{row?.status|titlecase}}</ion-label>
+
+      </ion-chip><br>
+      <span> Created On : {{row?.createdAt | date}}</span> <br>
+      <span> Updated On : {{row?.updatedAt | date}}</span> <br>
+    </ng-template>
+  </ngx-datatable-column>
+  <ngx-datatable-column name="Type" [width]="30">
+    <ng-template let-row="row"  ngx-datatable-cell-template>
+      <span *ngIf="row?.type == 'cancelpi'">Cancel Request</span>
+      <span *ngIf="row?.type == 'discount'">Discount Request</span>
+      <span *ngIf="row?.type == 'changepi'">Change Request</span>
+      <span *ngIf="row?.type == 'ati'">ATI Request</span>
+      <span *ngIf="row?.type == 'cn'">Cn Request</span>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Actions" [width]="30" [frozenRight]="true">
+    <ng-template let-row="row"  ngx-datatable-cell-template >
+    <div class="tableactions">
+      <span (click)="presentAddeditModal(row)" title="Edit" *ngIf="row?.toUser?._id==currentUser._id && (row.status=='pending' || row.status == 'forward')"> <ion-icon name="create-outline"></ion-icon> </span>
+    </div>
+    </ng-template>
+  </ngx-datatable-column>
+
+  </ngx-datatable>
+
+</ion-content>

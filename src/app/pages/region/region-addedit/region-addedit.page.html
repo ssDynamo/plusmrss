@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot=start>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <span *ngIf="!model?._id">Add</span>
+      <span *ngIf="model?._id">Edit</span> Region
+    </ion-title>
+    <ion-buttons slot=end>
+       <ion-button (click)="dismiss()"><ion-icon name="close-outline"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form (ngSubmit)="formSubmit($event)"  ngNativeValidate>
+    <ion-row>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Name</ion-label>
+          <ion-input name=name [(ngModel)]="model.name" required placeholder="Enter Name"></ion-input>
+        </ion-item>
+      </ion-col>
+
+        <ion-col size="12" size-sm="12">
+          <ion-item>
+            <ion-label>Is Active ?</ion-label>
+            <ion-toggle slot=end name="isActive" [(ngModel)]="model.isActive"></ion-toggle>
+          </ion-item>
+        </ion-col>
+
+
+
+
+    </ion-row>
+
+    <hr>
+    <ion-row>
+      <ion-col size=6><ion-button (click)="dismiss()" color=light expand=block>Cancel</ion-button></ion-col>
+      <ion-col size=6><ion-button type=submit expand=block>Save  <ion-spinner *ngIf="loading" name="lines-small"></ion-spinner></ion-button></ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>

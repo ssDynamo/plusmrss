@@ -1,0 +1,69 @@
+*{
+  font-size:13px;
+}
+.boldtitle{
+    font-weight:bold;
+    font-size:large;
+  }
+   
+  
+  .tabheader{
+     background-color: lightgray;
+  }
+  
+  .tabdata{
+    border-top:1px dotted gray;
+  }
+  
+
+  ion-title{
+      font-weight:bold;
+      font-size:1.5em;
+      padding-top:5px;
+      padding-bottom:5px;
+  }
+
+  .ion-text-center{
+      text-align: center;
+  }
+
+  .ion-text-end{
+      text-align: right;
+  }
+  table{
+    width:100%;
+  }
+
+  td,th{
+    vertical-align: baseline;
+    padding-top:10px;
+  }
+
+  .nonprintitem{
+    display:none;
+  }
+
+  .fieldname{
+    font-style: italic;
+    padding-top:10px;
+    padding-bottom:5px;
+    }
+    
+    .fieldvalue{
+      padding-top:5px;
+      padding-bottom:10px;
+      font-weight: bold;
+      border-bottom:1px solid black;
+    }
+
+    .smalltext{
+      font-size:10px;
+    }
+    
+    .boldtext{
+      font-weight: bold;
+    }
+
+    .qrclass{
+      margin:-5px;
+    }

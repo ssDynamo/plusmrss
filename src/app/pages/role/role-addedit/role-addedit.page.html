@@ -1,0 +1,117 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot=start>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <span *ngIf="!model?._id">Add</span>
+      <span *ngIf="model?._id">Edit</span> Role
+    </ion-title>
+    <ion-buttons slot=end>
+       <ion-button (click)="dismiss()"><ion-icon name="close-outline"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form (ngSubmit)="formSubmit($event)"  ngNativeValidate>
+    <ion-row>
+      <ion-col size="12" size-sm="12">
+        <ion-item>
+          <ion-label position="stacked">Name</ion-label>
+          <ion-input name=name [(ngModel)]="model.name" required placeholder="Enter Name"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Discount Limit (%)</ion-label>
+          <ion-input name=discount_limit max=100 min=0 [(ngModel)]="model.discount_limit" required placeholder="Enter Discount Limit"></ion-input>
+        </ion-item>
+      </ion-col>
+
+
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">ATI Limit</ion-label>
+          <ion-input name=ati_limit min=0 [(ngModel)]="model.ati_limit" required placeholder="Enter ATI Limit"></ion-input>
+        </ion-item>
+      </ion-col>
+
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Change PI Limit</ion-label>
+          <ion-input name=changepi_limit max=100 min=0 [(ngModel)]="model.changepi_limit" required placeholder="Enter Changepi Limit"></ion-input>
+        </ion-item>
+      </ion-col>
+
+
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label position="stacked">Cancel PI Limit</ion-label>
+          <ion-input name=cancelpi_limit min=0 [(ngModel)]="model.cancelpi_limit" required placeholder="Enter CancelPI Limit"></ion-input>
+        </ion-item>
+      </ion-col>
+
+
+
+        <ion-col size="12" size-sm="12">
+          <ion-item>
+            <ion-label>Is Admin ?</ion-label>
+            <ion-toggle slot=end name="isAdmin" [(ngModel)]="model.isAdmin"></ion-toggle>
+          </ion-item>
+        </ion-col>
+
+        <ion-col size="12" size-sm="12" hidden >
+          <ion-item>
+            <ion-label style="color:red">Is System Admin ? (!!! !!!)</ion-label>
+            <ion-toggle slot=end name="isSystem" [(ngModel)]="model.isSystem"></ion-toggle>
+          </ion-item>
+        </ion-col>
+        <!-- <ion-col size="12" size-sm="12" *ngIf="!model.isAdmin">
+          <ion-item>
+            <ion-label style="color:red">After Paid PI Edit</ion-label>
+            <ion-toggle slot=end name="isPaidpi_edit" [(ngModel)]="model.isPaidpi_edit"></ion-toggle>
+          </ion-item>
+        </ion-col> -->
+        <ion-col size="12" size-sm="12" *ngIf="!model?.isAdmin">
+          <ion-card class="welcome-card" style="background-color: #f9fafb;">
+            <ion-card-header>
+              <label style="font-weight: bold;font-size: 20px;float: left;">Permissions</label>
+              <label style="display:none;float: right;font-weight: bold;font-size: 16px;" >Check All &nbsp;  <ion-checkbox  color="danger" (ionChange)="checkAll()" [checked]=checkallflag></ion-checkbox>
+              </label>  &nbsp;&nbsp;
+            </ion-card-header>
+            <ion-card-content  *ngFor="let itemp of apiService.DBCache['PERMISSION_CACHE_LIST'] | keyvalue">
+              <!-- Getting and setting the state of the accordion group -->
+              <ion-accordion-group value="numbers">
+                <ion-accordion value="colors">
+                  <ion-item slot="header">
+                    <ion-label>{{itemp.key}}</ion-label>
+                  </ion-item>
+
+                  <ion-list slot="content" *ngFor="let permission of $any(itemp)?.value" style="width: 50%;display: inline-flex;">
+                    <ion-item >
+                      <ion-checkbox color="danger"  (ionChange)="changeModel($event, model.permissions, permission._id)" [checked]="checkIncludes(permission._id)"></ion-checkbox> &nbsp;&nbsp;
+                      <ion-label>{{permission.name}}</ion-label>
+                    </ion-item>
+                  </ion-list>
+                </ion-accordion>
+              </ion-accordion-group>
+              <!-- <ion-button (click)="logAccordionValue()">Log Value of Accordion Group</ion-button> -->
+           </ion-card-content>
+           <!-- <ion-button (click)="closeAccordion()">Close All Accordions</ion-button> -->
+
+          </ion-card>
+        </ion-col>
+
+    </ion-row>
+
+    <hr>
+    <ion-row>
+      <ion-col size=6><ion-button (click)="dismiss()" color=light expand=block>Cancel</ion-button></ion-col>
+      <ion-col size=6><ion-button type=submit expand=block>Save  <ion-spinner *ngIf="loading" name="lines-small"></ion-spinner></ion-button></ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>

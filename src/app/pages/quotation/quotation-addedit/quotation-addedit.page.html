@@ -1,0 +1,489 @@
+<ion-header style="display: block;">
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title *ngIf="!model._id || action=='piRenewal'">Add Quotation</ion-title>
+    <ion-title *ngIf="model._id && action!='piRenewal'">Quotation #{{model.idseq}} - {{model.status | uppercase}}
+    </ion-title>
+
+    <ion-buttons slot=end>
+      <ion-button color=primary fill=outline (click)="send_notification()"
+        *ngIf="model?._id && model?.status == 'pending'">Send Notification</ion-button>
+      <ion-button color=primary fill=outline (click)="presentLogViewModal()" *ngIf="model?._id">Show Log</ion-button>
+      <ion-button *ngIf="model._id" color=primary fill=outline [routerLink]="'/public/quotationtaxinvoice-view'"
+        [queryParams]="{_id:model?._id,view:'proformainvoice'}" [state]="{item:model}">Proforma Invoice <ion-spinner
+          *ngIf="loading" name="lines-small"></ion-spinner>
+      </ion-button>
+      <ion-button *ngIf="model.invoice_no" color=primary fill=outline [routerLink]="'/public/quotationtaxinvoice-view'"
+        [queryParams]="{_id:model?._id,view:'taxinvoice'}" [state]="{item:model}">Tax Invoice <ion-spinner
+          *ngIf="loading" name="lines-small"></ion-spinner>
+      </ion-button>
+      <ion-button color=primary fill=outline [disabled]="itemLength && localLength || model.total== 0"
+        (click)="formSubmit()">Save<ion-spinner *ngIf="loading" name="lines-small"></ion-spinner>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment (ionChange)="segmentChanged($event)" [(ngModel)]="currentTabIndex">
+      <ng-container *ngFor="let item of tabs;let i=index">
+        <ion-segment-button [value]="i" scrollable>
+          <ion-label>{{item}}</ion-label>
+        </ion-segment-button>
+      </ng-container>
+
+    </ion-segment>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+
+  <ng-container *ngIf="currentTabIndex==0">
+    <ion-row>
+      <ion-col size="12" size-sm="12" class="ng-select-col">
+        <ion-label class="mt-left">Select LeadOwner</ion-label>
+
+
+        <!-- <ng-select
+    [items]="apiService.DBCache['USER_LIST'] "
+    bindLabel="name"
+    [trackByFn]="apiService.NgSelecttrackByFn"
+    [(ngModel)]="model.user">
+    <ng-template ng-option-tmp ng-label-tmp let-item="item" let-index="index" let-search="searchTerm">
+      <div style="margin: 2px 0px;" class="card">
+          <div style="white-space: normal;">
+              <ion-card-subtitle style="color: black;"><b>{{item.name}}</b> : <span style="font-weight: normal;">{{item?.role?.name}}</span></ion-card-subtitle>
+
+          </div>
+      </div>
+    </ng-template>
+  </ng-select> -->
+
+        <app-user-autocomplete *ngIf="!loading" [item]="model.user" (newItemEvent)="model.user=$event">
+        </app-user-autocomplete>
+
+      </ion-col>
+
+      <ion-col size="12" size-sm="12" class="ng-select-col">
+        <ion-label class="mt-left">Select Customer</ion-label>
+        <!-- <ng-select
+      [items]="apiService.DBCache['CUSTOMER_LIST'] "
+      bindLabel="name"
+      [trackByFn]="apiService.NgSelecttrackByFn"
+      [ngModel]="model.customer"> </ng-select> -->
+
+        <app-customer-autocomplete *ngIf="!loading" [item]="model.customer" (newItemEvent)="model.customer=$event">
+        </app-customer-autocomplete>
+      </ion-col>
+
+      <ion-col size="12" size-sm="12">
+        <ion-button class="button_add" size="small" color="secondary"
+          (click)="helperService.windowpopup('/customer/list')">Manage Customers</ion-button>
+      </ion-col>
+    </ion-row>
+
+  </ng-container>
+
+
+
+  <ng-container *ngIf="currentTabIndex==1">
+    <!-- cart items-->
+    <ion-card class="cardcartnewbutton" *ngIf="model.status != 'cancelled'">
+     
+      
+      <!-- <ng-select id="gst" name="type" [items]="apiService.DBCache['METADATA_CACHE_LIST']['gst_percent']" bindLabel="name"
+         [trackByFn]="apiService.NgSelecttrackByFn"
+        [(ngModel)]="model.gst_percentage" placeholder="Select GST">
+      </ng-select> -->
+      <ion-label class="mt-left" style="align-self: center;font-weight: bold;">Select GST</ion-label> &nbsp;
+      <ng-select id="gst" name="gst_percentage" [(ngModel)]="model.gst_percentage" placeholder="Select GST"  [readonly]="model?._id">
+        <ng-container *ngFor="let item of apiService.DBCache['METADATA_CACHE_LIST']['gst_percent']">
+          <ng-option [value]="item.alias">{{item?.name}}</ng-option>
+        </ng-container>
+      </ng-select>
+
+      <ion-button (click)="presentCartitemAddeditModal()" [disabled]="model?.status == 'paid' || log_atirequests?.length >= 1 ">Add Cart Item
+      </ion-button>
+      <ion-button (click)="presentCartitemBulkUploadModal()" [disabled]="model?.status == 'paid' || log_atirequests?.length >= 1 ">Bulk Upload
+      </ion-button>
+    </ion-card>
+
+    <ng-container *ngFor="let item of model?.items;let i=index">
+      <ion-card>
+        <ion-card-header>
+          <ion-row>
+            <ion-col size=8>
+              <ion-card-subtitle>#{{i+1}} : {{item?.type?.name}}</ion-card-subtitle>
+              <ion-card-title>{{item?.tariff?.code}} : {{item?.tariff?.name}}</ion-card-title>
+              <span>Licensee : {{item?.licensee?.name}}<br></span>
+              <span>Location : {{item?.licensee?.operating_address_1}} {{item?.licensee?.operating_address_2}}<br></span>
+            </ion-col>
+
+            <ion-col size=4 style="text-align: right;">
+
+              <ng-container *ngIf="log_discountrequests">
+                <ng-container *ngFor="let r of get_discountRequestLog(i);let i=index">
+
+                  <ng-container
+                    *ngIf="r.canshow_discountrequestbox && !item.cart_discount_percentage && r.status == 'approved'">
+                    <ion-row>
+                      <!-- <ion-col size=6>
+                        <ion-input [(ngModel)]="r.var_applyDiscountModel" type=number [max]="r.var_maxdiscount" min=0
+                          placeholder="Enter Discount %"> </ion-input>
+                      </ion-col> -->
+                      <ion-col>
+                        <ion-button *ngIf="model.status!='paid'" size=small (click)="applyCartDiscount(item, r)"
+                          [disabled]="log_atirequests.length >= 1">
+                          Apply Discount</ion-button>
+                      </ion-col>
+                    </ion-row>
+                  </ng-container>
+                  <div (click)="presentRequestAddEditModal('discount',i,r)" class="requestlistdiv"
+                    [ngClass]="r.isActive ? 'activer':'inactiver'">{{r.cart_discount_percentage}} Discount Request of
+                    {{r.value}}% : {{r.status|titlecase}} <br> Updated on : {{r.updatedAt|date}}</div>
+                </ng-container>
+              </ng-container>
+              <ion-button *ngIf="model.status!='paid'" size=small fill=outline (click)="presentRequestAddEditModal('discount',i)"
+                [disabled]="log_atirequests?.length >= 1 || model.status == 'paid' || item?.cart_discount_percentage > 0 || log_transactions?.length >=1">+ Request For Discount</ion-button>
+
+              <ion-button [disabled]="log_atirequests?.length >= 1 || model.status == 'paid' || dis_applied==true" size=small fill=outline (click)="presentCartitemAddeditModal(item,i)">Edit</ion-button>
+              <ion-button [disabled]="log_atirequests?.length >= 1 || model.status == 'paid' || dis_applied==true" size=small (click)="presentCartDeleteConfirm(i)">
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+
+        </ion-card-header>
+
+        <ion-card-content>
+          <ion-row>
+            <ion-col size=10>
+              <!-- Fields-->
+              <ng-container *ngFor="let itemfield of item?.tariff?.specs?.fields">
+
+                <ng-container *ngFor="let mitemfield of itemfield?.matrix.dimensions">
+                  <ng-container *ngIf="mitemfield?.value">
+                    <b *ngIf="mitemfield?.type=='range'">{{mitemfield?.label}} : {{mitemfield?.value}}<br></b>
+                    <b *ngIf="mitemfield?.type=='select'">{{mitemfield?.label}} : {{mitemfield?.value?.name}}<br></b>
+                  </ng-container>
+                </ng-container>
+
+              </ng-container>
+              <!-- End Of Fields-->
+              From : <b>{{item?.start_date |date}}</b>
+              To : <b>{{item?.end_date|date}}</b>
+
+              <ng-container *ngIf="item.cart_discount_percentage">
+                <br>Discount <b>{{item.cart_discount_percentage}}</b>%
+              </ng-container>
+
+              <hr>
+              <ng-container *ngIf="item?.remark">
+                Remark:
+                <ion-note><i>{{item?.remark}}</i></ion-note>
+              </ng-container>
+            </ion-col>
+            <ion-col size=2 style="text-align: right;">
+              <span style="font-size:2.5em">S${{item?.cart_total_sub | number:'1.2-2':'en-US'}}</span>
+            </ion-col>
+          </ion-row>
+
+        </ion-card-content>
+
+      </ion-card>
+    </ng-container>
+    <ion-card class="cardcartnewbutton" *ngIf="model.items && model.status != 'cancelled'  ">
+      <ion-button (click)="presentCartitemAddeditModal()" [disabled]="model?.status == 'paid' || log_atirequests?.length >= 1 ">Add Cart Item
+      </ion-button>
+    </ion-card>
+  </ng-container>
+
+
+
+  <ng-container *ngIf="currentTabIndex==2">
+    <!-- cart items-->
+    <ion-card class="sumcard">
+
+      <ion-row class="summaryrow">
+        <ion-col size=6>
+          Sub Total
+        </ion-col>
+        <ion-col size=6>
+          S$ {{model?.total_sub | number:'1.2-2':'en-US'}}
+        </ion-col>
+
+        <!-- <ion-col size=6>
+          Discount ({{model?.discount_percentage}}%)
+        </ion-col>
+        <ion-col size=6>
+          S$ {{model?.total_discount | number:'1.2-2':'en-US'}}
+        </ion-col> -->
+
+
+        <ion-col size=6>
+          GST ({{model?.gst_percentage}}%)
+        </ion-col>
+        <ion-col size=6>
+          S$ {{model?.total_gst | number:'1.2-2':'en-US'}}
+        </ion-col>
+
+        <ion-col size=6>
+          <h4>Total </h4>
+        </ion-col>
+        <ion-col size=6>
+          <h4> S$ {{model?.total | number:'1.2-2':'en-US'}}</h4>
+        </ion-col>
+
+        <ion-col size=6>
+          <h4>Balance </h4>
+        </ion-col>
+        <ion-col size=6>
+          <h4> S$ {{remainingPayment | number:'1.2-2':'en-US'}}</h4>
+        </ion-col>
+
+
+
+      </ion-row>
+
+      <ion-row class="summaryrow" *ngIf="remainingPaymentSurplus > 0">
+        <ion-col size=6>
+          <h4>Surplus Paid </h4>
+        </ion-col>
+        <ion-col size=6>
+          <h4> S$ {{remainingPaymentSurplus | number:'1.2-2':'en-US'}}</h4>
+        </ion-col>
+      </ion-row>
+
+
+    </ion-card>
+
+    <!-- <ion-card class="sumcard">
+
+      <ion-row>
+        <ion-col size=6>
+         <h4>Apply Discount </h4>
+        </ion-col>
+        <ion-col size=6>
+          <ng-container *ngIf="canshow_discountrequestbox && model?.discount_percentage <= 0">
+            <ion-row>
+              <ion-col size=6>
+                <ion-input [(ngModel)]="var_applyDiscountModel" type=number [max]="var_maxdiscount" min=0 placeholder="Enter Discount %"> </ion-input>
+
+              </ion-col>
+              <ion-col size=6>
+                    <ion-button size=small (click)="applyDiscount()" [disabled]="var_applyDiscountModel<1 || !var_applyDiscountModel || log_atirequests.length >= 1">Apply Discount</ion-button>
+               </ion-col>
+            </ion-row>
+           </ng-container> -->
+
+    <!-- Previous Requests -->
+    <!-- <ng-container *ngIf="log_discountrequests">
+            <ng-container *ngFor="let r of log_discountrequests;let i=index">
+              <div (click)="presentRequestAddEditModal('discount',i,r)" class="requestlistdiv" [ngClass]="r.isActive ? 'activer':'inactiver'">Discount Request of {{r.value}}% : {{r.status|titlecase}} <br> Updated on : {{r.updatedAt|date}}</div>
+            </ng-container>
+          </ng-container>
+
+          <ion-button size=small fill=outline (click)="presentRequestAddEditModal('discount')" [disabled]="log_atirequests?.length >= 1 || model.status == 'paid'">+ Request For Discount</ion-button> -->
+
+    <!-- End of Previous Requests -->
+    <!--
+        </ion-col>
+      </ion-row>
+
+
+    </ion-card> -->
+    <div *ngIf="model.status!='cancelled'">
+    <ion-card class="sumcard">
+
+      <ion-row>
+        <ion-col size=6>
+          <h4> ATI Request</h4>
+        </ion-col>
+        <ion-col size=6>
+
+
+          <!-- Previous Requests -->
+          <ng-container *ngIf="log_atirequests">
+            <ng-container *ngFor="let r of log_atirequests;let i=index">
+              <!-- <div class="requestlistdiv" >Credit Note is created #{{r.idseq}} <br> Updated on : {{r.updatedAt|date}}</div> -->
+              <div (click)="presentRequestAddEditModal('ati',i,r)" class="requestlistdiv"
+                [ngClass]="r.isActive ? 'activer':'inactiver'">ATI Request of {{r.value}} : {{r.status|titlecase}} <br>
+                Updated on : {{r.updatedAt|date}}</div>
+            </ng-container>
+          </ng-container>
+
+          <ion-button size=small fill=outline [disabled]="discountBtn || model.status == 'paid'"
+            (click)="presentRequestAddEditModal('ati')">+ Request For ATI</ion-button>
+
+          <!-- End of Previous Requests -->
+
+        </ion-col>
+      </ion-row>
+
+
+    </ion-card>
+    <ion-card class="sumcard">
+
+      <ion-row>
+        <ion-col size=6>
+          <h4> Transactions </h4>
+        </ion-col>
+        <ion-col size=6>
+
+
+          <!-- Previous Requests -->
+          <ng-container *ngIf="log_transactions">
+            <ng-container *ngFor="let r of log_transactions">
+              <div (click)="presentTransactionAddEditModal(r)" class="requestlistdiv"><b> Transaction #{{r.idseq}} :
+                  {{r?.customer_reference}} </b> <br>Amount : S${{r.amount}} <br> Status : {{r.status|titlecase}} <br>
+                Updated on : {{r.updatedAt|date}}</div>
+            </ng-container>
+          </ng-container>
+
+          <ion-button size=small fill=outline [disabled]="model?.status == 'paid'" (click)="presentTransactionAddEditModal()">+ Add Transaction</ion-button>
+
+          <!-- End of Previous Requests -->
+
+        </ion-col>
+      </ion-row>
+
+    </ion-card>
+
+    <ion-card class="sumcard">
+
+      <ion-row>
+        <ion-col size=6>
+          <h4>Change Request </h4>
+        </ion-col>
+        <ion-col size=6>
+          <!-- Previous Requests -->
+          <ng-container *ngIf="log_changepirequests">
+            <ng-container *ngFor="let r of log_changepirequests;let i=index">
+              <div (click)="presentRequestAddEditModal('changepi',i,r)" class="requestlistdiv"
+                [ngClass]="r.isActive ? 'activer':'inactiver'">Change Request is {{r.status|titlecase}} <br> Updated on
+                : {{r.updatedAt|date}}</div>
+            </ng-container>
+          </ng-container>
+
+          <ion-button size=small fill=outline (click)="presentRequestAddEditModal('changepi')">+ Request For Change PI
+          </ion-button>
+
+          <!-- End of Previous Requests -->
+
+        </ion-col>
+      </ion-row>
+
+
+    </ion-card>
+    
+    <ion-card class="sumcard" *ngIf="authService.checkPermission('creditenote_add') && (model.status === 'paid' || model.is_ati)">
+
+      <ion-row>
+        <ion-col size=6>
+          <h4>Credit Note</h4>
+        </ion-col>
+        <ion-col size=6>
+          <ng-container *ngIf="log_creditnotes">
+            <ng-container *ngFor="let r of log_creditnotes">
+              <div   class="requestlistdiv">Credit Note is created #{{r.idseq}}
+                <br> Updated on : {{r.updatedAt|date}}
+              </div>
+              <ion-button color=primary [routerLink]="'/public/credit-note'"
+                [queryParams]="{_id:r._id,view:'credit-note'}" [state]="{item:r}">View Credit Note <ion-spinner
+                  *ngIf="loading" name="lines-small"></ion-spinner>
+              </ion-button>
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngIf="log_cnrequests ">
+            <ng-container *ngFor="let r of log_cnrequests;let i=index">
+              <div class="requestlistdiv" (click)="presentRequestAddEditModal('cn',i,r)"
+                [ngClass]="r.isActive ? 'activer':'inactiver'">Cn Request : {{r.status|titlecase}} <br>
+                Updated on : {{r.updatedAt|date}}</div>
+            </ng-container>
+          </ng-container>
+          
+          <ion-button *ngIf="log_cnrequests.length==0" size=small fill=outline (click)="confirmCreditNote()" [disabled]="model.status == 'pending' && !model.is_ati">+
+            Request For Credit Note</ion-button>
+        </ion-col>
+      </ion-row>
+
+
+    </ion-card>
+
+
+    <ion-card class="sumcard" *ngIf="model._id">
+
+      <ion-row>
+        <ion-col size=6>
+          <h4>Evidence File upload</h4>
+        </ion-col>
+        <ion-col size=6>
+          <ng-container *ngIf="log_evidence">
+            <ng-container *ngFor="let rev of log_evidence let i = index">
+              <div class="requestlistdiv">Evidence {{i+1}} <br> Created On : {{rev.createdAt|date}}</div>
+              <ion-button size=small color=primary fill=outline><a class="button_add" color=primary
+                  [href]="this.apiService.apiUrl +'/'+ rev.file_path" target="_blank" download
+                  style="text-decoration: none;">View Evidence</a> </ion-button>
+              <ion-button size=small color=primary (click)="confirmevidence(rev)">
+                <ion-icon name="trash"></ion-icon>
+              </ion-button><br>
+
+            </ng-container>
+          </ng-container>
+          <input style="display: none" type="file" class=" btn btn-sm btn-danger btn-simple"
+            (change)="handleFileInput($event)" #imgInput>
+          <ion-button (click)="imgInput.click()" class="button_add" color="primary" value="Upload File">Upload File
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+
+    </ion-card>
+
+  </div>
+    <ion-card class="sumcard">
+
+      <ion-row>
+        <ion-col size=6>
+          <h4>Cancel PI Request</h4>
+        </ion-col>
+        <ion-col size=6>
+          <ng-container *ngIf="log_cancelpirequests">
+            <ng-container *ngFor="let r of log_cancelpirequests;let i=index">
+              <div (click)="presentRequestAddEditModal('cancelpi',i,r)" class="requestlistdiv"
+                [ngClass]="r.isActive ? 'activer':'inactiver'">Cancel Request is {{r.status|titlecase}} <br> Updated on
+                : {{r.updatedAt|date}}</div>
+            </ng-container>
+          </ng-container>
+
+          <ion-button *ngIf="model.status != 'cancelled'" size=small fill=outline (click)="presentRequestAddEditModal('cancelpi')">+ Request For Cancel PI
+          </ion-button>
+
+
+        </ion-col>
+      </ion-row>
+
+
+    </ion-card>
+
+
+  </ng-container>
+
+
+
+  <ion-row style="margin-top:50px">
+    <ion-col size=6 style="text-align: right;">
+      <ion-button *ngIf="canGo('prev')" fill=outline (click)="go('prev')">Prev</ion-button>
+    </ion-col>
+    <ion-col size=6>
+      <ion-button *ngIf="canGo('next')" (click)="go('next')">Next <ion-spinner *ngIf="loading" name="lines-small">
+        </ion-spinner>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+
+</ion-content>
